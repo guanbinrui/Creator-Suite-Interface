@@ -15,6 +15,7 @@
 import { Fragment, useState } from "react";
 import {
   useAccount,
+  useBalance,
   useEnsAvatar,
   useEnsName,
   useConnect,
@@ -25,26 +26,24 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3CenterLeftIcon,
   Bars4Icon,
+  StarIcon,
+  BuildingStorefrontIcon,
   ClockIcon,
   HomeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
-  ChevronRightIcon,
   ChevronUpDownIcon,
-  EllipsisVerticalIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 import { formatEthereumAddress } from "../../helpers/formatEthereumAddress";
 import { ProductList } from "../ProductList";
-import { Blockie } from "../Blockie";
-import { isValidAddress } from "../../helpers/isValidAddress";
 import { useBlockie } from "../../hooks/useBlockie";
 
 const navigation = [
-  { name: "Home", href: "#", icon: HomeIcon, current: true },
-  { name: "My tasks", href: "#", icon: Bars4Icon, current: false },
-  { name: "Recent", href: "#", icon: ClockIcon, current: false },
+  { name: "Market", href: "#", icon: BuildingStorefrontIcon, current: true },
+  { name: "My Creations", href: "#", icon: Bars4Icon, current: false },
+  { name: "Favorites", href: "#", icon: StarIcon, current: false },
 ];
 const teams = [
   { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
@@ -100,19 +99,15 @@ export function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { address, isConnected } = useAccount();
-  const addressBlockie = useBlockie(address)
-  const { data: ensAvatar} = useEnsAvatar({address})
+  const addressBlockie = useBlockie(address);
+  const { data: balance } = useBalance({ address });
+  const { data: ensAvatar } = useEnsAvatar({ address });
   const { data: ensName } = useEnsName({ address });
 
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
   const { disconnect } = useDisconnect();
-
-  console.log({
-    address,
-    isConnected,
-  });
 
   return (
     <>
@@ -212,7 +207,7 @@ export function Dashboard() {
                           </a>
                         ))}
                       </div>
-                      <div className="mt-8">
+                      {/* <div className="mt-8">
                         <h3
                           className="px-3 text-sm font-medium text-gray-500"
                           id="mobile-teams-headline"
@@ -241,7 +236,7 @@ export function Dashboard() {
                             </a>
                           ))}
                         </div>
-                      </div>
+                      </div> */}
                     </nav>
                   </div>
                 </Dialog.Panel>
@@ -271,7 +266,11 @@ export function Dashboard() {
                   <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                     <span className="flex w-full items-center justify-between">
                       <span className="flex min-w-0 items-center justify-between space-x-3">
-                        <img className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" src={ensAvatar || addressBlockie} alt={ensName} />
+                        <img
+                          className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
+                          src={ensAvatar || addressBlockie}
+                          alt={ensName}
+                        />
                         <span className="flex min-w-0 flex-1 flex-col">
                           {ensName ? (
                             <span className="truncate text-sm font-medium text-gray-900">
@@ -452,8 +451,7 @@ export function Dashboard() {
                   </a>
                 ))}
               </div>
-              <div className="mt-8">
-                {/* Secondary navigation */}
+              {/* <div className="mt-8">
                 <h3
                   className="px-3 text-sm font-medium text-gray-500"
                   id="desktop-teams-headline"
@@ -482,7 +480,7 @@ export function Dashboard() {
                     </a>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </nav>
           </div>
         </div>
@@ -651,7 +649,7 @@ export function Dashboard() {
             <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-                  Home
+                  Creator Suite
                 </h1>
               </div>
               <div className="mt-4 flex sm:mt-0 sm:ml-4">
