@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import makeBlockie from 'ethereum-blockies-base64';
-import { isValidAddress } from "../helpers/isValidAddress"
+import { isValidAddress } from "../../helpers/isValidAddress"
 
 export function Blockie(props) {
     const { className, address } = props

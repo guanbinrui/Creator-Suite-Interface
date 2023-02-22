@@ -12,76 +12,104 @@
   }
   ```
 */
-import { Fragment, useState } from 'react'
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Fragment, useState } from "react";
+import {
+  useAccount,
+  useEnsAvatar,
+  useEnsName,
+  useConnect,
+  useDisconnect,
+} from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+import {
+  Bars3CenterLeftIcon,
+  Bars4Icon,
+  ClockIcon,
+  HomeIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import {
   ChevronRightIcon,
   ChevronUpDownIcon,
   EllipsisVerticalIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/20/solid'
-import { formatEthereumAddress } from '../helpers/formatEthereumAddress'
-import { ProductList } from '../ProductList'
-import { Blockie } from '../Blockie'
+} from "@heroicons/react/20/solid";
+import { formatEthereumAddress } from "../../helpers/formatEthereumAddress";
+import { ProductList } from "../ProductList";
+import { Blockie } from "../Blockie";
+import { isValidAddress } from "../../helpers/isValidAddress";
 
 const navigation = [
-  { name: 'Home', href: '#', icon: HomeIcon, current: true },
-  { name: 'My tasks', href: '#', icon: Bars4Icon, current: false },
-  { name: 'Recent', href: '#', icon: ClockIcon, current: false },
-]
+  { name: "Home", href: "#", icon: HomeIcon, current: true },
+  { name: "My tasks", href: "#", icon: Bars4Icon, current: false },
+  { name: "Recent", href: "#", icon: ClockIcon, current: false },
+];
 const teams = [
-  { name: 'Engineering', href: '#', bgColorClass: 'bg-indigo-500' },
-  { name: 'Human Resources', href: '#', bgColorClass: 'bg-green-500' },
-  { name: 'Customer Success', href: '#', bgColorClass: 'bg-yellow-500' },
-]
+  { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
+  { name: "Human Resources", href: "#", bgColorClass: "bg-green-500" },
+  { name: "Customer Success", href: "#", bgColorClass: "bg-yellow-500" },
+];
 const projects = [
   {
     id: 1,
-    title: 'GraphQL API',
-    initials: 'GA',
-    team: 'Engineering',
+    title: "GraphQL API",
+    initials: "GA",
+    team: "Engineering",
     members: [
       {
-        name: 'Dries Vincent',
-        handle: 'driesvincent',
+        name: "Dries Vincent",
+        handle: "driesvincent",
         imageUrl:
-          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
       {
-        name: 'Lindsay Walton',
-        handle: 'lindsaywalton',
+        name: "Lindsay Walton",
+        handle: "lindsaywalton",
         imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
       {
-        name: 'Courtney Henry',
-        handle: 'courtneyhenry',
+        name: "Courtney Henry",
+        handle: "courtneyhenry",
         imageUrl:
-          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
       {
-        name: 'Tom Cook',
-        handle: 'tomcook',
+        name: "Tom Cook",
+        handle: "tomcook",
         imageUrl:
-          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
     ],
     totalMembers: 12,
-    lastUpdated: 'March 17, 2020',
+    lastUpdated: "March 17, 2020",
     pinned: true,
-    bgColorClass: 'bg-pink-600',
+    bgColorClass: "bg-pink-600",
   },
   // More projects...
-]
-const pinnedProjects = projects.filter((project) => project.pinned)
+];
+const pinnedProjects = projects.filter((project) => project.pinned);
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { address, isConnected } = useAccount();
+  const { data: ensName } = useEnsName({ address });
+
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
+  const { disconnect } = useDisconnect();
+
+  console.log({
+    address,
+    isConnected,
+  });
 
   return (
     <>
@@ -95,7 +123,11 @@ export function Dashboard() {
       */}
       <div className="min-h-full">
         <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog as="div" className="relative z-40 lg:hidden" onClose={setSidebarOpen}>
+          <Dialog
+            as="div"
+            className="relative z-40 lg:hidden"
+            onClose={setSidebarOpen}
+          >
             <Transition.Child
               as={Fragment}
               enter="transition-opacity ease-linear duration-300"
@@ -135,7 +167,10 @@ export function Dashboard() {
                         onClick={() => setSidebarOpen(false)}
                       >
                         <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                        <XMarkIcon
+                          className="h-6 w-6 text-white"
+                          aria-hidden="true"
+                        />
                       </button>
                     </div>
                   </Transition.Child>
@@ -155,16 +190,18 @@ export function Dashboard() {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-100 text-gray-900'
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                              'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md'
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
+                              "group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md"
                             )}
-                            aria-current={item.current ? 'page' : undefined}
+                            aria-current={item.current ? "page" : undefined}
                           >
                             <item.icon
                               className={classNames(
-                                item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                                'mr-3 flex-shrink-0 h-6 w-6'
+                                item.current
+                                  ? "text-gray-500"
+                                  : "text-gray-400 group-hover:text-gray-500",
+                                "mr-3 flex-shrink-0 h-6 w-6"
                               )}
                               aria-hidden="true"
                             />
@@ -173,10 +210,17 @@ export function Dashboard() {
                         ))}
                       </div>
                       <div className="mt-8">
-                        <h3 className="px-3 text-sm font-medium text-gray-500" id="mobile-teams-headline">
+                        <h3
+                          className="px-3 text-sm font-medium text-gray-500"
+                          id="mobile-teams-headline"
+                        >
                           Teams
                         </h3>
-                        <div className="mt-1 space-y-1" role="group" aria-labelledby="mobile-teams-headline">
+                        <div
+                          className="mt-1 space-y-1"
+                          role="group"
+                          aria-labelledby="mobile-teams-headline"
+                        >
                           {teams.map((team) => (
                             <a
                               key={team.name}
@@ -184,7 +228,10 @@ export function Dashboard() {
                               className="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                             >
                               <span
-                                className={classNames(team.bgColorClass, 'w-2.5 h-2.5 mr-4 rounded-full')}
+                                className={classNames(
+                                  team.bgColorClass,
+                                  "w-2.5 h-2.5 mr-4 rounded-full"
+                                )}
                                 aria-hidden="true"
                               />
                               <span className="truncate">{team.name}</span>
@@ -216,26 +263,34 @@ export function Dashboard() {
           <div className="mt-5 flex h-0 flex-1 flex-col overflow-y-auto pt-1">
             {/* User account dropdown */}
             <Menu as="div" className="relative inline-block px-3 text-left">
-              <div>
-                <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
-                  <span className="flex w-full items-center justify-between">
-                    <span className="flex min-w-0 items-center justify-between space-x-3">
-                      <Blockie
-                        className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                        address="0x66b57885E8E9D84742faBda0cE6E3496055b012d"
-                      />
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate text-sm font-medium text-gray-900">binrui.eth</span>
-                        <span className="truncate text-sm text-gray-500">{formatEthereumAddress("0x66b57885E8E9D84742faBda0cE6E3496055b012d", 4)}</span>
+              {isConnected ? (
+                <div>
+                  <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                    <span className="flex w-full items-center justify-between">
+                      <span className="flex min-w-0 items-center justify-between space-x-3">
+                        <Blockie
+                          className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
+                          address={address}
+                        />
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          {ensName ? (
+                            <span className="truncate text-sm font-medium text-gray-900">
+                              {ensName}
+                            </span>
+                          ) : null}
+                          <span className="truncate text-sm text-gray-500">
+                            {formatEthereumAddress(address, 4)}
+                          </span>
+                        </span>
                       </span>
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                        aria-hidden="true"
+                      />
                     </span>
-                    <ChevronUpDownIcon
-                      className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </span>
-                </Menu.Button>
-              </div>
+                  </Menu.Button>
+                </div>
+              ) : null}
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -252,8 +307,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           View profile
@@ -265,8 +322,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Settings
@@ -278,8 +337,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Notifications
@@ -293,8 +354,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Get desktop app
@@ -306,8 +369,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Support
@@ -321,8 +386,10 @@ export function Dashboard() {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
                           )}
                         >
                           Logout
@@ -343,7 +410,10 @@ export function Dashboard() {
                   className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
                   aria-hidden="true"
                 >
-                  <MagnifyingGlassIcon className="mr-3 h-4 w-4 text-gray-400" aria-hidden="true" />
+                  <MagnifyingGlassIcon
+                    className="mr-3 h-4 w-4 text-gray-400"
+                    aria-hidden="true"
+                  />
                 </div>
                 <input
                   type="text"
@@ -362,15 +432,19 @@ export function Dashboard() {
                     key={item.name}
                     href={item.href}
                     className={classNames(
-                      item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
-                      'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
+                      item.current
+                        ? "bg-gray-200 text-gray-900"
+                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
+                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                     )}
-                    aria-current={item.current ? 'page' : undefined}
+                    aria-current={item.current ? "page" : undefined}
                   >
                     <item.icon
                       className={classNames(
-                        item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 flex-shrink-0 h-6 w-6'
+                        item.current
+                          ? "text-gray-500"
+                          : "text-gray-400 group-hover:text-gray-500",
+                        "mr-3 flex-shrink-0 h-6 w-6"
                       )}
                       aria-hidden="true"
                     />
@@ -380,10 +454,17 @@ export function Dashboard() {
               </div>
               <div className="mt-8">
                 {/* Secondary navigation */}
-                <h3 className="px-3 text-sm font-medium text-gray-500" id="desktop-teams-headline">
+                <h3
+                  className="px-3 text-sm font-medium text-gray-500"
+                  id="desktop-teams-headline"
+                >
                   Teams
                 </h3>
-                <div className="mt-1 space-y-1" role="group" aria-labelledby="desktop-teams-headline">
+                <div
+                  className="mt-1 space-y-1"
+                  role="group"
+                  aria-labelledby="desktop-teams-headline"
+                >
                   {teams.map((team) => (
                     <a
                       key={team.name}
@@ -391,7 +472,10 @@ export function Dashboard() {
                       className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                     >
                       <span
-                        className={classNames(team.bgColorClass, 'w-2.5 h-2.5 mr-4 rounded-full')}
+                        className={classNames(
+                          team.bgColorClass,
+                          "w-2.5 h-2.5 mr-4 rounded-full"
+                        )}
                         aria-hidden="true"
                       />
                       <span className="truncate">{team.name}</span>
@@ -422,7 +506,10 @@ export function Dashboard() {
                   </label>
                   <div className="relative w-full text-gray-400 focus-within:text-gray-600">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                      <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
+                      <MagnifyingGlassIcon
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      />
                     </div>
                     <input
                       id="search-field"
@@ -463,8 +550,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               View profile
@@ -476,8 +565,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               Settings
@@ -489,8 +580,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               Notifications
@@ -504,8 +597,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               Get desktop app
@@ -517,8 +612,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               Support
@@ -532,8 +629,10 @@ export function Dashboard() {
                             <a
                               href="#"
                               className={classNames(
-                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                'block px-4 py-2 text-sm'
+                                active
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-700",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               Logout
@@ -551,14 +650,20 @@ export function Dashboard() {
             {/* Page title & actions */}
             <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Home</h1>
+                <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
+                  Home
+                </h1>
               </div>
               <div className="mt-4 flex sm:mt-0 sm:ml-4">
                 <button
                   type="button"
                   className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
+                  onClick={() => {
+                    if (isConnected) disconnect();
+                    else connect();
+                  }}
                 >
-                  Connect Wallet
+                  {isConnected ? "Disconnect" : "Connect Wallet"}
                 </button>
               </div>
             </div>
@@ -567,5 +672,5 @@ export function Dashboard() {
         </div>
       </div>
     </>
-  )
+  );
 }
