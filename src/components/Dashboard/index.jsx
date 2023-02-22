@@ -39,6 +39,7 @@ import { formatEthereumAddress } from "../../helpers/formatEthereumAddress";
 import { ProductList } from "../ProductList";
 import { Blockie } from "../Blockie";
 import { isValidAddress } from "../../helpers/isValidAddress";
+import { useBlockie } from "../../hooks/useBlockie";
 
 const navigation = [
   { name: "Home", href: "#", icon: HomeIcon, current: true },
@@ -99,6 +100,8 @@ export function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { address, isConnected } = useAccount();
+  const addressBlockie = useBlockie(address)
+  const { data: ensAvatar} = useEnsAvatar({address})
   const { data: ensName } = useEnsName({ address });
 
   const { connect } = useConnect({
@@ -268,10 +271,7 @@ export function Dashboard() {
                   <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                     <span className="flex w-full items-center justify-between">
                       <span className="flex min-w-0 items-center justify-between space-x-3">
-                        <Blockie
-                          className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                          address={address}
-                        />
+                        <img className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" src={ensAvatar || addressBlockie} alt={ensName} />
                         <span className="flex min-w-0 flex-1 flex-col">
                           {ensName ? (
                             <span className="truncate text-sm font-medium text-gray-900">
