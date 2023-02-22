@@ -3,9 +3,9 @@ import { isValidAddress } from './isValidAddress'
 
 /**
  * Format an Ethereum address
- * @param {string} address 
- * @param {number} size 
- * @returns 
+ * @param {string} address
+ * @param {number} size
+ * @returns
  */
 export function formatEthereumAddress(address, size = 0) {
     if (!isValidAddress(address)) return address
