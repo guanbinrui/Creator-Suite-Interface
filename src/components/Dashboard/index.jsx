@@ -36,6 +36,7 @@ import {
   ChevronUpDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
+import { formatBalance } from "../../helpers/formatBalance";
 import { formatEthereumAddress } from "../../helpers/formatEthereumAddress";
 import { ProductList } from "../ProductList";
 import { useBlockie } from "../../hooks/useBlockie";
@@ -653,6 +654,10 @@ export function Dashboard() {
                 </h1>
               </div>
               <div className="mt-4 flex sm:mt-0 sm:ml-4">
+                {/* <div className="text-sm font-semibold leading-6 text-gray-900 py-2 mr-4">
+                  {formatBalance(balance.value.toString(), balance.decimals, 4)}{" "}
+                  {balance.symbol}
+                </div> */}
                 <button
                   type="button"
                   className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
