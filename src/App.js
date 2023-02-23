@@ -5,15 +5,15 @@ import { Home } from './pages/Home/index.jsx'
 import { Error } from './pages/Error/index.jsx'
 import { Dashboard } from './pages/Dashboard/index.jsx'
 import { WagmiProvider } from './contexts/Wagmi'
-import { Settings } from './pages/Settings'
 import { Favorites } from './pages/Favorites'
+import { AnimationLayout } from './components/AnimationLayout'
 
 function App() {
     return (
         <WagmiProvider>
             <HashRouter>
                 <Routes>
-                    <Route path="/">
+                    <Route path="/" element={<AnimationLayout />}>
                         <Route index element={<Home />} />
                         <Route path="creator">
                             <Route index element={<Dashboard />} />
