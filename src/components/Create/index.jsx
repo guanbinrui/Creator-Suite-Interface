@@ -7,7 +7,7 @@ export function Create() {
                 <div className="space-y-8 divide-y divide-gray-200">
                     <div>
                         <div>
-                            <h3 className="text-lg font-medium leading-6 text-gray-900">List for sale</h3>
+                            <h3 className="text-2xl font-medium leading-6 text-gray-900">List for sale</h3>
                             <p className="mt-1 text-sm text-gray-500">
                                 Your work will be stored in an encrypted form on the server and can only be viewed by
                                 anyone who makes a payment through a smart contract.
