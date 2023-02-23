@@ -2,17 +2,26 @@ import { Fragment, useState } from 'react'
 import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Bars3CenterLeftIcon, StarIcon, BuildingStorefrontIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+    Bars3CenterLeftIcon,
+    StarIcon,
+    BuildingStorefrontIcon,
+    XMarkIcon,
+    SparklesIcon,
+} from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { ProductList } from '../../components/ProductList'
 import { useBlockie } from '../../hooks/useBlockie'
 import { Route, Routes, Navigate } from 'react-router-dom'
+import { Create } from '../../components/Create'
 
 const navigation = [
-    { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon, current: true },
-    { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon, current: false },
+    { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
+    { name: 'Create', href: '#/creation/create', icon: SparklesIcon },
+    { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon },
 ]
+
 const projects = [
     {
         id: 1,
@@ -60,7 +69,9 @@ function classNames(...classes) {
 
 export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [currentNavigation, setCurrentNavigation] = useState(navigation[0].name)
+    const [currentNavigation, setCurrentNavigation] = useState(
+        (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
+    )
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)
@@ -527,6 +538,7 @@ export function Dashboard(props) {
                     </div>
                     <Routes>
                         <Route path="/" element={<ProductList title="Creations" />} />
+                        <Route path="create/" element={<Create />} />
                         <Route path="favorites/" element={<ProductList title="Favorites" />} />
                         <Route path="/*" element={<Navigate to="/creation" />} />
                     </Routes>
