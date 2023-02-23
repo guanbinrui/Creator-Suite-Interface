@@ -1,39 +1,39 @@
-import { motion } from "framer-motion";
-import { Outlet, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion'
+import { Outlet, useLocation } from 'react-router-dom'
 
-const PageLayout = ({ children }) => children;
+const PageLayout = ({ children }) => children
 
 const pageVariants = {
     initial: {
-      opacity: 0
+        opacity: 0,
     },
     in: {
-      opacity: 1
+        opacity: 1,
     },
     out: {
-      opacity: 0
-    }
-  };
-  
-  const pageTransition = {
-    type: "tween",
-    ease: "linear",
-    duration: 0.5
-  };
+        opacity: 0,
+    },
+}
 
-export function  AnimationLayout() {
-  const { pathname } = useLocation();
-  return (
-    <PageLayout>
-      <motion.div
-        key={pathname}
-        initial="initial"
-        animate="in"
-        variants={pageVariants}
-        transition={pageTransition}
-      >
-        <Outlet />
-      </motion.div>
-    </PageLayout>
-  );
-};
+const pageTransition = {
+    type: 'tween',
+    ease: 'linear',
+    duration: 0.5,
+}
+
+export function AnimationLayout() {
+    const { pathname } = useLocation()
+    return (
+        <PageLayout>
+            <motion.div
+                key={pathname}
+                initial="initial"
+                animate="in"
+                variants={pageVariants}
+                transition={pageTransition}
+            >
+                <Outlet />
+            </motion.div>
+        </PageLayout>
+    )
+}
