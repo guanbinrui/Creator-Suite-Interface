@@ -45,7 +45,8 @@ export function ModeToggle() {
             type="button"
             className="flex items-center justify-center rounded-md transition hover:bg-zinc-900/5 dark:hover:bg-white/5 px-1 py-1"
             aria-label="Toggle dark mode"
-            onClick={toggleMode}>
+            onClick={toggleMode}
+        >
             <SunIcon className="h-8 w-8 stroke-zinc-900 dark:hidden" />
             <MoonIcon className="hidden h-8 w-8 stroke-white dark:block" />
         </button>
