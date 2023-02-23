@@ -5,7 +5,6 @@ import { Home } from './pages/Home/index.jsx'
 import { Error } from './pages/Error/index.jsx'
 import { Dashboard } from './pages/Dashboard/index.jsx'
 import { WagmiProvider } from './contexts/Wagmi'
-import { Settings } from './pages/Settings'
 
 function App() {
     return (
@@ -14,10 +13,7 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route index element={<Home />} />
-                        <Route path="creator">
-                            <Route index element={<Dashboard />} />
-                            <Route path="settings" element={<Settings />} />
-                        </Route>
+                        <Route path="creation/*" element={<Dashboard />} />
                     </Route>
                     <Route path="*" element={<Error />} />
                 </Routes>

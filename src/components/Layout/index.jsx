@@ -1,17 +1,45 @@
+/*
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
+  }
+  ```
+*/
 import { Fragment, useState } from 'react'
 import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Bars3CenterLeftIcon, StarIcon, BuildingStorefrontIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+    Bars3CenterLeftIcon,
+    Bars4Icon,
+    StarIcon,
+    BuildingStorefrontIcon,
+    ClockIcon,
+    HomeIcon,
+    XMarkIcon,
+} from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { formatBalance } from '../../helpers/formatBalance'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { ProductList } from '../../components/ProductList'
 import { useBlockie } from '../../hooks/useBlockie'
-import { Route, Routes, Navigate } from 'react-router-dom'
+import { ModeToggle } from '../../components/ModeToggle'
 
 const navigation = [
-    { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon, current: true },
-    { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon, current: false },
+    { name: 'Market', href: '#/creator', icon: BuildingStorefrontIcon, current: true },
+    { name: 'Favorites', href: '#/creator/favorites', icon: StarIcon, current: false },
+]
+const teams = [
+    { name: 'Engineering', href: '#', bgColorClass: 'bg-indigo-500' },
+    { name: 'Human Resources', href: '#', bgColorClass: 'bg-green-500' },
+    { name: 'Customer Success', href: '#', bgColorClass: 'bg-yellow-500' },
 ]
 const projects = [
     {
@@ -58,9 +86,8 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export function Dashboard(props) {
+export function Layout(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [currentNavigation, setCurrentNavigation] = useState(navigation[0].name)
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)
@@ -135,15 +162,12 @@ export function Dashboard(props) {
                                                     key={item.name}
                                                     href={item.href}
                                                     className={classNames(
-                                                        currentNavigation === item.name
+                                                        item.current
                                                             ? 'bg-gray-100 text-gray-900'
                                                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                                                         'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                                                     )}
                                                     aria-current={item.current ? 'page' : undefined}
-                                                    onClick={() => {
-                                                        currentNavigation(item.name)
-                                                    }}
                                                 >
                                                     <item.icon
                                                         className={classNames(
@@ -337,13 +361,12 @@ export function Dashboard(props) {
                                     key={item.name}
                                     href={item.href}
                                     className={classNames(
-                                        currentNavigation === item.name
+                                        item.current
                                             ? 'bg-gray-200 text-gray-900'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
                                         'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
                                     )}
                                     aria-current={item.current ? 'page' : undefined}
-                                    onClick={() => setCurrentNavigation(item.name)}
                                 >
                                     <item.icon
                                         className={classNames(
@@ -525,11 +548,7 @@ export function Dashboard(props) {
                             </button>
                         </div>
                     </div>
-                    <Routes>
-                        <Route path="/" element={<ProductList title="Creations" />} />
-                        <Route path="favorites/" element={<ProductList title="Favorites" />} />
-                        <Route path="/*" element={<Navigate to="/creation" />} />
-                    </Routes>
+                    {props.children}
                 </main>
             </div>
         </div>

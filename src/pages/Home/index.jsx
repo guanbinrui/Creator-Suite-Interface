@@ -4,7 +4,7 @@ export function Home() {
             <h1>Core Service</h1>
             <ul>
                 <li>
-                    <a href="#/creator">&gt; Creator Suite</a>
+                    <a href="#/creation">&gt; Creator Suite</a>
                 </li>
             </ul>
         </>

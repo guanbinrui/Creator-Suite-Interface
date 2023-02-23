@@ -3,7 +3,6 @@
   "printWidth": 120,
   "semi": false,
   "singleQuote": true,
-  "bracketSameLine": true,
   "tabWidth": 4,
   "overrides": [
     {
