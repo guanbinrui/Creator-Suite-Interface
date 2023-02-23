@@ -28,9 +28,9 @@ import {
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatBalance } from '../../helpers/formatBalance'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
-import { ProductList } from '../ProductList'
+import { ProductList } from '../../components/ProductList'
 import { useBlockie } from '../../hooks/useBlockie'
-import { ModeToggle } from '../ModeToggle'
+import { ModeToggle } from '../../components/ModeToggle'
 
 const navigation = [
     { name: 'Market', href: '#', icon: BuildingStorefrontIcon, current: true },
