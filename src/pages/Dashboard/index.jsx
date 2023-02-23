@@ -60,6 +60,7 @@ function classNames(...classes) {
 
 export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [currentNavigation, setCurrentNavigation] = useState(navigation[0].name)
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)
@@ -134,12 +135,15 @@ export function Dashboard(props) {
                                                     key={item.name}
                                                     href={item.href}
                                                     className={classNames(
-                                                        item.current
+                                                        currentNavigation === item.name
                                                             ? 'bg-gray-100 text-gray-900'
                                                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                                                         'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                                                     )}
                                                     aria-current={item.current ? 'page' : undefined}
+                                                    onClick={() => {
+                                                        currentNavigation(item.name)
+                                                    }}
                                                 >
                                                     <item.icon
                                                         className={classNames(
@@ -333,12 +337,13 @@ export function Dashboard(props) {
                                     key={item.name}
                                     href={item.href}
                                     className={classNames(
-                                        item.current
+                                        currentNavigation === item.name
                                             ? 'bg-gray-200 text-gray-900'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
                                         'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
                                     )}
                                     aria-current={item.current ? 'page' : undefined}
+                                    onClick={() => setCurrentNavigation(item.name)}
                                 >
                                     <item.icon
                                         className={classNames(
