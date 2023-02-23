@@ -1051,11 +1051,21 @@ body {
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
 }
+.stroke-white {
+  stroke: #fff;
+}
+.stroke-zinc-900 {
+  stroke: #18181b;
+}
 .object-cover {
   object-fit: cover;
 }
 .object-center {
   object-position: center;
+}
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 .px-2 {
   padding-left: 0.5rem;
@@ -1310,6 +1320,10 @@ body {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-zinc-900\/5:hover {
+  background-color: rgb(24 24 27 / 0.05);
+}
+
 .hover\:text-gray-500:hover {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
@@ -1395,6 +1409,18 @@ body {
 
 .group:hover .group-hover\:opacity-75 {
   opacity: 0.75;
+}
+
+.dark .dark\:block {
+  display: block;
+}
+
+.dark .dark\:hidden {
+  display: none;
+}
+
+.dark .dark\:hover\:bg-white\/5:hover {
+  background-color: rgb(255 255 255 / 0.05);
 }
 
 @media (min-width: 640px) {
@@ -1604,4 +1630,8 @@ body {
   .xl\:gap-x-8 {
     column-gap: 2rem;
   }
+}
+
+.\[\&_\*\]\:\!transition-none * {
+  transition-property: none !important;
 }
