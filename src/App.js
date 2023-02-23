@@ -6,6 +6,7 @@ import { Error } from './pages/Error/index.jsx'
 import { Dashboard } from './pages/Dashboard/index.jsx'
 import { WagmiProvider } from './contexts/Wagmi'
 import { Settings } from './pages/Settings'
+import { Favorites } from './pages/Favorites'
 
 function App() {
     return (
@@ -16,7 +17,7 @@ function App() {
                         <Route index element={<Home />} />
                         <Route path="creator">
                             <Route index element={<Dashboard />} />
-                            <Route path="settings" element={<Settings />} />
+                            <Route path="favorites" element={<Favorites />} />
                         </Route>
                     </Route>
                     <Route path="*" element={<Error />} />
