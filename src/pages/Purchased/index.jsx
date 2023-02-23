@@ -1,10 +1,10 @@
 import { Layout } from '../../components/Layout'
 import { Creations } from '../../components/Creations'
 
-export function Favorites() {
+export function Purchased() {
     return (
         <Layout>
-            <Creations title="Favorites" />
+            <Creations title="Purchased" />
         </Layout>
     )
 }

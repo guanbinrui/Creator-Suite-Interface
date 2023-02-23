@@ -4,10 +4,10 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
     Bars3CenterLeftIcon,
-    StarIcon,
     BuildingStorefrontIcon,
     XMarkIcon,
     SparklesIcon,
+    ShoppingBagIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
@@ -20,7 +20,7 @@ import { Creations } from '../../components/Creations'
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
     { name: 'Create', href: '#/creation/create', icon: SparklesIcon },
-    { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon },
+    { name: 'Purchased', href: '#/creation/purchased', icon: ShoppingBagIcon },
 ]
 
 const creations = [
@@ -540,7 +540,7 @@ export function Dashboard(props) {
                     <Routes>
                         <Route path="/" element={<Creations title="Creations" />} />
                         <Route path="create/" element={<Create />} />
-                        <Route path="favorites/" element={<Creations title="Favorites" />} />
+                        <Route path="purchased/" element={<Creations title="Purchased" />} />
                         <Route path=":creationId/" element={<Creation />} />
                         <Route path="/*" element={<Navigate to="/creation" />} />
                     </Routes>

@@ -1,6 +1,7 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Tab } from '@headlessui/react'
+import { PurchasedNotification } from '../PurchasedNotification'
 
 const product = {
     name: 'Application UI Icon Pack',
@@ -94,8 +95,11 @@ function classNames(...classes) {
 }
 
 export function Creation() {
+    const [showNotification, setShowNotification] = useState(false)
+
     return (
         <div className="bg-white">
+            <PurchasedNotification show={showNotification} setShow={setShowNotification} />
             <div className="mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                 {/* Product */}
                 <div className="lg:grid lg:grid-cols-7 lg:grid-rows-1 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16">
@@ -147,6 +151,7 @@ export function Creation() {
                             <button
                                 type="button"
                                 className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                onClick={() => setShowNotification(true)}
                             >
                                 Pay {product.price}
                             </button>
