@@ -43,7 +43,7 @@ export function PurchasedNotification(props) {
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
                                         <p className="text-sm font-medium text-gray-900">Successfully Purchased!</p>
                                         <p className="mt-1 text-sm text-gray-500">
-                                            You can view the work in the{' '}
+                                            You can view it in the{' '}
                                             <Link to="/creation/purchased">
                                                 <span className="font-medium text-blue-600 hover:text-blue-500">
                                                     Purchased

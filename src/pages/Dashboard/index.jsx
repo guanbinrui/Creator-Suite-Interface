@@ -1,25 +1,18 @@
 import { Fragment, useState } from 'react'
+import { Route, Routes, Navigate, Link, useNavigate } from 'react-router-dom'
 import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-    Bars3CenterLeftIcon,
-    BuildingStorefrontIcon,
-    XMarkIcon,
-    SparklesIcon,
-    ShoppingBagIcon,
-} from '@heroicons/react/24/outline'
+import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { useBlockie } from '../../hooks/useBlockie'
-import { Route, Routes, Navigate } from 'react-router-dom'
 import { Create } from '../../components/Create'
 import { Creation } from '../../components/Creation'
 import { Creations } from '../../components/Creations'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
-    { name: 'Create', href: '#/creation/create', icon: SparklesIcon },
     { name: 'Purchased', href: '#/creation/purchased', icon: ShoppingBagIcon },
 ]
 
@@ -69,6 +62,8 @@ function classNames(...classes) {
 }
 
 export function Dashboard(props) {
+    const navigate = useNavigate()
+
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [currentNavigation, setCurrentNavigation] = useState(
         (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
@@ -237,57 +232,31 @@ export function Dashboard(props) {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <a
-                                                href="#"
+                                                href="#/creation/create"
                                                 className={classNames(
                                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                     'block px-4 py-2 text-sm',
                                                 )}
                                             >
-                                                View profile
+                                                Create
                                             </a>
                                         )}
-                                    </Menu.Item>
+                                    </Menu.Item>{' '}
                                     <Menu.Item>
                                         {({ active }) => (
                                             <a
-                                                href="#"
+                                                href="#/creation/purchased"
                                                 className={classNames(
                                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                     'block px-4 py-2 text-sm',
                                                 )}
                                             >
-                                                Settings
-                                            </a>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Notifications
+                                                Purchased
                                             </a>
                                         )}
                                     </Menu.Item>
                                 </div>
                                 <div className="py-1">
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Get desktop app
-                                            </a>
-                                        )}
-                                    </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
                                             <a
@@ -298,21 +267,6 @@ export function Dashboard(props) {
                                                 )}
                                             >
                                                 Support
-                                            </a>
-                                        )}
-                                    </Menu.Item>
-                                </div>
-                                <div className="py-1">
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Logout
                                             </a>
                                         )}
                                     </Menu.Item>
@@ -373,158 +327,21 @@ export function Dashboard(props) {
             </div>
             {/* Main column */}
             <div className="flex flex-col lg:pl-64">
-                {/* Search header */}
-                <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white lg:hidden">
-                    <button
-                        type="button"
-                        className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
-                        onClick={() => setSidebarOpen(true)}
-                    >
-                        <span className="sr-only">Open sidebar</span>
-                        <Bars3CenterLeftIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                    <div className="flex flex-1 justify-between px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-1">
-                            <form className="flex w-full md:ml-0" action="#" method="GET">
-                                <label htmlFor="search-field" className="sr-only">
-                                    Search
-                                </label>
-                                <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                                        <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
-                                    </div>
-                                    <input
-                                        id="search-field"
-                                        name="search-field"
-                                        className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-                                        placeholder="Search"
-                                        type="search"
-                                    />
-                                </div>
-                            </form>
-                        </div>
-                        <div className="flex items-center">
-                            {/* Profile dropdown */}
-                            <Menu as="div" className="relative ml-3">
-                                {isConnected ? (
-                                    <div>
-                                        <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                            <span className="sr-only">Open user menu</span>
-                                            <img
-                                                className="h-8 w-8 rounded-full"
-                                                src={ensAvatar || addressBlockie}
-                                                alt=""
-                                            />
-                                        </Menu.Button>
-                                    </div>
-                                ) : null}
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="py-1">
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        View profile
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Settings
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Notifications
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                        </div>
-                                        <div className="py-1">
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Get desktop app
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Support
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                        </div>
-                                        <div className="py-1">
-                                            <Menu.Item>
-                                                {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Logout
-                                                    </a>
-                                                )}
-                                            </Menu.Item>
-                                        </div>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
-                        </div>
-                    </div>
-                </div>
                 <main className="flex-1">
                     {/* Page title & actions */}
-                    <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+                    <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 flex items-center">
                         <div className="min-w-0 flex-1">
-                            <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Creator Suite</h1>
+                            <button
+                                type="button"
+                                className="flex items-center justify-center border border-gray-300 rounded-md transition hover:bg-zinc-900/5 px-1 py-1"
+                                aria-label="List a creation"
+                            >
+                                <Link to="/creation/create">
+                                    <PlusIcon className="h-6 w-6 stroke-zinc-500 hover:stroke-zinc-900 " />
+                                </Link>
+                            </button>
                         </div>
-                        <div className="mt-4 flex sm:mt-0 sm:ml-4 items-center">
+                        <div className="flex sm:mt-0 sm:ml-4 items-center">
                             <button
                                 type="button"
                                 className="order-0 inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
