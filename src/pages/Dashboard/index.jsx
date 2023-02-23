@@ -28,9 +28,9 @@ import {
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatBalance } from '../../helpers/formatBalance'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
-import { ProductList } from '../ProductList'
+import { ProductList } from '../../components/ProductList'
 import { useBlockie } from '../../hooks/useBlockie'
-import { ModeToggle } from '../ModeToggle'
+import { ModeToggle } from '../../components/ModeToggle'
 
 const navigation = [
     { name: 'Market', href: '#', icon: BuildingStorefrontIcon, current: true },
@@ -121,7 +121,8 @@ export function Dashboard() {
                             enterTo="opacity-100"
                             leave="transition-opacity ease-linear duration-300"
                             leaveFrom="opacity-100"
-                            leaveTo="opacity-0">
+                            leaveTo="opacity-0"
+                        >
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-75" />
                         </Transition.Child>
 
@@ -133,7 +134,8 @@ export function Dashboard() {
                                 enterTo="translate-x-0"
                                 leave="transition ease-in-out duration-300 transform"
                                 leaveFrom="translate-x-0"
-                                leaveTo="-translate-x-full">
+                                leaveTo="-translate-x-full"
+                            >
                                 <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
                                     <Transition.Child
                                         as={Fragment}
@@ -142,12 +144,14 @@ export function Dashboard() {
                                         enterTo="opacity-100"
                                         leave="ease-in-out duration-300"
                                         leaveFrom="opacity-100"
-                                        leaveTo="opacity-0">
+                                        leaveTo="opacity-0"
+                                    >
                                         <div className="absolute top-0 right-0 -mr-12 pt-2">
                                             <button
                                                 type="button"
                                                 className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                                                onClick={() => setSidebarOpen(false)}>
+                                                onClick={() => setSidebarOpen(false)}
+                                            >
                                                 <span className="sr-only">Close sidebar</span>
                                                 <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
                                             </button>
@@ -173,7 +177,8 @@ export function Dashboard() {
                                                                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                                                             'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                                                         )}
-                                                        aria-current={item.current ? 'page' : undefined}>
+                                                        aria-current={item.current ? 'page' : undefined}
+                                                    >
                                                         <item.icon
                                                             className={classNames(
                                                                 item.current
@@ -277,7 +282,8 @@ export function Dashboard() {
                                 enterTo="transform opacity-100 scale-100"
                                 leave="transition ease-in duration-75"
                                 leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95">
+                                leaveTo="transform opacity-0 scale-95"
+                            >
                                 <Menu.Items className="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                     <div className="py-1">
                                         <Menu.Item>
@@ -287,7 +293,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     View profile
                                                 </a>
                                             )}
@@ -299,7 +306,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     Settings
                                                 </a>
                                             )}
@@ -311,7 +319,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     Notifications
                                                 </a>
                                             )}
@@ -325,7 +334,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     Get desktop app
                                                 </a>
                                             )}
@@ -337,7 +347,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     Support
                                                 </a>
                                             )}
@@ -351,7 +362,8 @@ export function Dashboard() {
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm',
-                                                    )}>
+                                                    )}
+                                                >
                                                     Logout
                                                 </a>
                                             )}
@@ -368,7 +380,8 @@ export function Dashboard() {
                             <div className="relative mt-1 rounded-md shadow-sm">
                                 <div
                                     className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                                    aria-hidden="true">
+                                    aria-hidden="true"
+                                >
                                     <MagnifyingGlassIcon className="mr-3 h-4 w-4 text-gray-400" aria-hidden="true" />
                                 </div>
                                 <input
@@ -393,7 +406,8 @@ export function Dashboard() {
                                                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
                                             'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
                                         )}
-                                        aria-current={item.current ? 'page' : undefined}>
+                                        aria-current={item.current ? 'page' : undefined}
+                                    >
                                         <item.icon
                                             className={classNames(
                                                 item.current
@@ -447,7 +461,8 @@ export function Dashboard() {
                         <button
                             type="button"
                             className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
-                            onClick={() => setSidebarOpen(true)}>
+                            onClick={() => setSidebarOpen(true)}
+                        >
                             <span className="sr-only">Open sidebar</span>
                             <Bars3CenterLeftIcon className="h-6 w-6" aria-hidden="true" />
                         </button>
@@ -491,7 +506,8 @@ export function Dashboard() {
                                         enterTo="transform opacity-100 scale-100"
                                         leave="transition ease-in duration-75"
                                         leaveFrom="transform opacity-100 scale-100"
-                                        leaveTo="transform opacity-0 scale-95">
+                                        leaveTo="transform opacity-0 scale-95"
+                                    >
                                         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                             <div className="py-1">
                                                 <Menu.Item>
@@ -501,7 +517,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             View profile
                                                         </a>
                                                     )}
@@ -513,7 +530,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             Settings
                                                         </a>
                                                     )}
@@ -525,7 +543,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             Notifications
                                                         </a>
                                                     )}
@@ -539,7 +558,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             Get desktop app
                                                         </a>
                                                     )}
@@ -551,7 +571,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             Support
                                                         </a>
                                                     )}
@@ -565,7 +586,8 @@ export function Dashboard() {
                                                             className={classNames(
                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                                 'block px-4 py-2 text-sm',
-                                                            )}>
+                                                            )}
+                                                        >
                                                             Logout
                                                         </a>
                                                     )}
@@ -597,7 +619,8 @@ export function Dashboard() {
                                     onClick={() => {
                                         if (isConnected) disconnect()
                                         else connect()
-                                    }}>
+                                    }}
+                                >
                                     {isConnected ? 'Disconnect' : 'Connect Wallet'}
                                 </button>
                             </div>

@@ -1,11 +1,11 @@
-import { WagmiConfig, createClient } from "wagmi";
-import { getDefaultProvider } from "ethers";
+import { WagmiConfig, createClient } from 'wagmi'
+import { getDefaultProvider } from 'ethers'
 
 const client = createClient({
-  autoConnect: true,
-  provider: getDefaultProvider(),
-});
+    autoConnect: true,
+    provider: getDefaultProvider(),
+})
 
 export function WagmiProvider(props) {
-  return <WagmiConfig client={client}>{props.children}</WagmiConfig>;
+    return <WagmiConfig client={client}>{props.children}</WagmiConfig>
 }
