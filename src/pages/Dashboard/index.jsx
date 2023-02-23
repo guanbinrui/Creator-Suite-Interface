@@ -21,6 +21,7 @@ const navigation = [
     { name: 'Create', href: '#/creation/create', icon: SparklesIcon },
     { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon },
 ]
+
 const projects = [
     {
         id: 1,
@@ -68,7 +69,9 @@ function classNames(...classes) {
 
 export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [currentNavigation, setCurrentNavigation] = useState(navigation[0].name)
+    const [currentNavigation, setCurrentNavigation] = useState(
+        (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
+    )
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)
