@@ -1,10 +1,10 @@
 import { Layout } from '../../components/Layout'
-import { ProductList } from '../../components/ProductList'
+import { Creations } from '../../components/Creations'
 
 export function Favorites() {
     return (
         <Layout>
-            <ProductList title="Favorites" />
+            <Creations title="Favorites" />
         </Layout>
     )
 }

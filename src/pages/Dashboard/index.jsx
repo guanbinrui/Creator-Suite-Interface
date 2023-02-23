@@ -11,10 +11,11 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
-import { ProductList } from '../../components/ProductList'
 import { useBlockie } from '../../hooks/useBlockie'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { Create } from '../../components/Create'
+import { Creation } from '../../components/Creation'
+import { Creations } from '../../components/Creations'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
@@ -22,7 +23,7 @@ const navigation = [
     { name: 'Favorites', href: '#/creation/favorites', icon: StarIcon },
 ]
 
-const projects = [
+const creations = [
     {
         id: 1,
         title: 'GraphQL API',
@@ -59,9 +60,9 @@ const projects = [
         pinned: true,
         bgColorClass: 'bg-pink-600',
     },
-    // More projects...
+    // More creations...
 ]
-const pinnedProjects = projects.filter((project) => project.pinned)
+const pinnedCreations = creations.filter((project) => project.pinned)
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -537,9 +538,10 @@ export function Dashboard(props) {
                         </div>
                     </div>
                     <Routes>
-                        <Route path="/" element={<ProductList title="Creations" />} />
+                        <Route path="/" element={<Creations title="Creations" />} />
                         <Route path="create/" element={<Create />} />
-                        <Route path="favorites/" element={<ProductList title="Favorites" />} />
+                        <Route path="favorites/" element={<Creations title="Favorites" />} />
+                        <Route path=":creationId/" element={<Creation />} />
                         <Route path="/*" element={<Navigate to="/creation" />} />
                     </Routes>
                 </main>
