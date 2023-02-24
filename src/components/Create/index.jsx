@@ -1,9 +1,59 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { DocumentPlusIcon } from '@heroicons/react/24/outline'
+import { useAccount, useConnect } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { Dots } from '../Dots'
 import { CreatedNotification } from '../CreatedNotification'
+import { useCreateCreation } from '../../hooks/useCreateCreation'
+import { isZero } from '../../helpers/isZero'
+import { isValidAddress } from '../../helpers/isValidAddress'
 
 export function Create() {
     const [showCreatedNotification, setShowCreatedNotification] = useState(false)
+
+    const { address, isConnected } = useAccount()
+    const { connect } = useConnect({
+        connector: new InjectedConnector(),
+    })
+
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
+    const [paymentTokenAddress, setPaymentTokenAddress] = useState('0x')
+    const [paymentTokenAmount, setPaymentTokenAmount] = useState('')
+    const [attachments, setAttachments] = useState([])
+
+    const [submitted, setSubmitted] = useState(false)
+
+    const validationMessage = useMemo(() => {
+        if (!name) return 'Please enter creation name.'
+        if (!paymentTokenAddress) return 'Please select the price token.'
+        // if (!isValidAddress(paymentTokenAddress)) return 'Please select a valid price token.'
+        if (isZero(paymentTokenAmount)) return 'Please enter price.'
+        if (!attachments.length) return 'Please upload your creation.'
+        const attachment = attachments[0]
+        if (
+            !attachment.name.endsWith('.md') &&
+            !attachment.name.endsWith('.pdf') &&
+            !attachment.content.includes('text/') &&
+            !attachment.content.includes('image/') &&
+            !attachment.content.includes('application/pdf')
+        )
+            return 'The given attachment not supported.'
+        return ''
+    }, [name, description, paymentTokenAddress, paymentTokenAmount, attachments])
+
+    const creation = useMemo(() => {
+        return {
+            name,
+            description,
+            ownerAddress: address,
+            paymentTokenAddress,
+            paymentTokenAmount,
+            attachments,
+        }
+    }, [address, name, description, paymentTokenAddress, paymentTokenAmount, attachments])
+
+    const { trigger, isMutating } = useCreateCreation(creation)
 
     return (
         <>
@@ -33,6 +83,8 @@ export function Create() {
                                             autoComplete="name"
                                             placeholder="Item name"
                                             className="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            value={name}
+                                            onChange={(event) => setName(event.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -47,7 +99,8 @@ export function Create() {
                                             name="description"
                                             rows={3}
                                             className="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                            defaultValue={''}
+                                            value={description}
+                                            onChange={(event) => setDescription(event.target.value)}
                                         />
                                     </div>
                                     <p className="mt-2 text-sm text-gray-500">
@@ -76,12 +129,14 @@ export function Create() {
                                                 DAI
                                             </span>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 name="price"
                                                 id="price"
                                                 autoComplete="price"
                                                 placeholder="Amount"
                                                 className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                value={paymentTokenAmount}
+                                                onChange={(event) => setPaymentTokenAmount(event.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -97,7 +152,7 @@ export function Create() {
                                                 className="mx-auto h-12 w-12 text-gray-400"
                                                 stroke="currentColor"
                                             />
-                                            <div className="flex text-sm text-gray-600">
+                                            <div className="flex justify-center text-sm text-gray-600">
                                                 <label
                                                     htmlFor="file-upload"
                                                     className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
@@ -108,12 +163,34 @@ export function Create() {
                                                         name="file-upload"
                                                         type="file"
                                                         className="sr-only"
+                                                        onChange={(event) => {
+                                                            event.preventDefault()
+                                                            event.stopPropagation()
+
+                                                            // no file
+                                                            const file = event.target.files[0]
+                                                            if (!file) return
+
+                                                            // read as base64
+                                                            const reader = new FileReader()
+
+                                                            reader.addEventListener('loadend', () => {
+                                                                setAttachments([
+                                                                    {
+                                                                        name: file.name,
+                                                                        content: reader.result,
+                                                                    },
+                                                                ])
+                                                            })
+                                                            reader.readAsDataURL(file)
+                                                        }}
                                                     />
                                                 </label>
-                                                <p className="pl-1">or drag and drop</p>
                                             </div>
                                             <p className="text-xs text-gray-500">
-                                                PDF, Markdown, PNG, JPG, GIF up to 10MB
+                                                {attachments.length
+                                                    ? attachments[0].name
+                                                    : 'PDF, Markdown, PNG, JPG, GIF up to 10MB'}
                                             </p>
                                         </div>
                                     </div>
@@ -124,12 +201,28 @@ export function Create() {
 
                     <div className="pt-5">
                         <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                Complete Listing
-                            </button>
+                            {isMutating ? (
+                                <Dots />
+                            ) : (
+                                <button
+                                    type="submit"
+                                    className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:shadow-none"
+                                    disabled={!!validationMessage || isMutating}
+                                    onClick={async (ev) => {
+                                        ev.preventDefault()
+                                        ev.stopPropagation()
+
+                                        setSubmitted(true)
+
+                                        // connect wallet
+                                        if (!isConnected) connect()
+
+                                        await trigger(creation)
+                                    }}
+                                >
+                                    {submitted ? validationMessage || 'Complete Listing' : 'Complete Listing'}
+                                </button>
+                            )}
                         </div>
                     </div>
                 </form>

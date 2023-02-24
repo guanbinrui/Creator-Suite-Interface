@@ -1,27 +1,29 @@
 import { chain, isNil, isEmpty } from 'lodash'
 import { createInstance } from 'localforage'
 import { isSameAddress } from '../helpers/isSameAddress'
+import { isValidAddress } from '../helpers/isValidAddress'
 
 const store = createInstance({
     name: 'CreatorSuite',
 })
 
-export function validateCreation(creation) {
-    if (!creation.name) throw new Error('No name.')
-    if (!creation.ownerAddress) throw new Error('No owner address.')
-    if (!creation.paymentTokenAddress) throw new Error('No payment token address.')
-    if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
-    if (!creation.attachments.length) throw new Error('No attachments.')
+function getNextCreationId() {
+    return store.length
 }
 
-/**
- * Add creation
- * @param {string} id
- * @param {object} creation
- */
-export function addCreation(id, creation) {
-    validateCreation(creation)
-    store.setItem(id, creation)
+function validateCreation(creation) {
+    if (!creation.name) throw new Error('No name.')
+    if (!creation.ownerAddress) throw new Error('No owner address.')
+    if (!isValidAddress(creation.ownerAddress)) throw new Error('No a valid owner address.')
+    if (!creation.paymentTokenAddress) throw new Error('No payment token address.')
+    if (!isValidAddress(creation.paymentTokenAddress)) throw new Error('No a valid payment token address.')
+    if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
+    if (!creation.attachments.length) throw new Error('No attachments.')
+    const attachment = creation.attachments[0]
+    if (!attachment.title) throw new Error('No attachment title.')
+    if (!attachment.content) throw new Error('No attachment content.')
+    if (!creation.createdAt) throw new Error('No created at.')
+    if (!creation.updatedAt) throw new Error('No updated at.')
 }
 
 /**
@@ -31,25 +33,22 @@ export function addCreation(id, creation) {
  * @param {string} ownerAddress
  * @param {string} paymentTokenAddress
  * @param {string} paymentTokenAmount
- * @param {Blob[]} attachments
+ * @param {string[]} attachments
  * @returns
  */
-export function createCreation(name, description, ownerAddress, paymentTokenAddress, paymentTokenAmount, attachments) {
+export async function createCreation(initials) {
     const now = Date.now()
     const creation = {
-        name,
-        description,
-        attachments,
-        ownerAddress,
-        buyerAddresses: [],
-        paymentTokenAddress,
-        paymentTokenAmount,
+        ...initials,
         createdAt: now,
         updatedAt: now,
     }
-
     validateCreation(creation)
-    return creation
+
+    const id = await getNextCreationId()
+
+    await store.setItem(id, creation)
+    return store.getItem(id)
 }
 
 /**
