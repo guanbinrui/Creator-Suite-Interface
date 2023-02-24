@@ -41,6 +41,7 @@
     "react-router-dom": "^6.8.1",
     "sort-by": "^1.2.0",
     "stream-browserify": "^3.0.0",
+    "swr": "^2.0.3",
     "tailwindcss": "^3.2.7",
     "urlcat": "^2.0.4",
     "use-subscription": "^1.8.0",
