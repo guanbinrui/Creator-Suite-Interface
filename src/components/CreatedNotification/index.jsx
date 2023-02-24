@@ -1,11 +1,12 @@
 import { Fragment, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { Link } from 'react-router-dom'
 
-export function PurchasedNotification(props) {
+export function CreatedNotification(props) {
     const { show, setShow, success } = props
+
     useEffect(() => {
         if (!show) return
 
@@ -47,14 +48,14 @@ export function PurchasedNotification(props) {
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
                                         <p className="text-sm font-medium text-gray-900">
-                                            {success ? 'Successfully Purchased!' : 'Purchase Failed'}
+                                            {success ? 'Successfully Created!' : 'Create Failed'}
                                         </p>
                                         {success ? (
                                             <p className="mt-1 text-sm text-gray-500">
                                                 You can view it in the{' '}
-                                                <Link to="/creation/purchased">
+                                                <Link to="/creation/owned">
                                                     <span className="font-medium text-blue-600 hover:text-blue-500">
-                                                        Purchased
+                                                        Owned
                                                     </span>
                                                 </Link>
                                                 .

@@ -61,13 +61,6 @@ export function Settings() {
 
     return (
         <>
-            {/*
-        This example requires updating your template:
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
             <div>
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
