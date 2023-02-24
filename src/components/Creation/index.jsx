@@ -159,8 +159,8 @@ export function Creation() {
                                         <img
                                             className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 mr-1"
                                             src={ensAvatar || ownerBlockie}
-                                            title={ensName}
-                                            alt={ensName}
+                                            title={ensName || data.ownerAddress}
+                                            alt={ensName || data.ownerAddress}
                                         />
                                         <span className="mr-1">created at</span>
                                         <time dateTime={data.createdAt}>

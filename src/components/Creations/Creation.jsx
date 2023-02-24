@@ -18,7 +18,7 @@ export function Creation(props) {
                         {props.name}
                     </h3>
 
-                    <div className="flex justify-between ">
+                    <div className="flex justify-between items-center">
                         <p className="mt-1 text-sm text-gray-500">
                             {formatDistanceToNowStrict(props.updatedAt, {
                                 addSuffix: true,
@@ -26,9 +26,7 @@ export function Creation(props) {
                         </p>
                         <p className="text-sm text-gray-900">
                             <span className="mr-1 text-gray-500">Price:</span>
-                            <span className="font-medium">
-                                {formatPrice(props.paymentTokenAmount * 10, 'DAI')}
-                            </span>
+                            <span className="font-medium">{formatPrice(props.paymentTokenAmount * 10, 'DAI')}</span>
                         </p>
                     </div>
                 </div>
