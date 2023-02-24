@@ -9,10 +9,8 @@ export function useCreateCreation(creation) {
         },
         {
             suspense: true,
-            revalidateIfStale: false,
             revalidateOnFocus: false,
             revalidateOnMount: false,
-            revalidateOnReconnect: false,
         },
     )
 }

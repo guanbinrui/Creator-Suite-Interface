@@ -118,7 +118,12 @@ export async function removeCreation(id) {
  * @param {string} id
  * @returns
  */
-export function getCreation(id) {
+export async function getCreation(id) {
+    console.log('DEBUG: getCreation')
+    console.log({
+        id,
+    })
+    await delay(1500)
     return store.getItem(id)
 }
 

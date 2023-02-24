@@ -1,8 +1,17 @@
 import { Fragment, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { format } from 'date-fns'
+import { useAccount, useConnect, useEnsAvatar, useEnsName } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Tab } from '@headlessui/react'
 import { PurchasedNotification } from '../PurchasedNotification'
 import { Previewer } from '../Previewer'
+import { useBlockie } from '../../hooks/useBlockie'
+import { useCreation } from '../../hooks/useCreation'
+import { Spinner } from '../Spinner'
+import { formatBalance } from '../../helpers/formatBalance'
+import { isSameAddress } from '../../helpers/isSameAddress'
 
 const creation = {
     name: 'Application UI Icon Pack',
@@ -99,6 +108,23 @@ export function Creation() {
 
     const [openPreviewer, setOpenPreviewer] = useState(false)
 
+    const { creationId } = useParams()
+    const { data, isValidating } = useCreation(creationId)
+
+    const { address, isConnected } = useAccount()
+    const { connect } = useConnect({
+        connector: new InjectedConnector(),
+    })
+
+    const ownerBlockie = useBlockie(data.ownerAddress)
+    const { data: ensName } = useEnsName({ address: data.ownerAddress })
+    const { data: ensAvatar } = useEnsAvatar({ address: data.ownerAddress })
+    const owned = isSameAddress(data.ownerAddress, address)
+    const bought = (data.buyerAddresses ?? []).includes(address)
+
+    if (isValidating) return <Spinner />
+    if (!data) return null
+
     return (
         <>
             <PurchasedNotification success={success} show={showNotification} setShow={setShowNotification} />
@@ -123,53 +149,55 @@ export function Creation() {
                             <div className="flex flex-col-reverse">
                                 <div className="mt-4">
                                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                                        {creation.name}
+                                        {data.name}
                                     </h1>
 
                                     <h2 id="information-heading" className="sr-only">
                                         Product information
                                     </h2>
-                                    <p className="mt-2 text-sm text-gray-500">
-                                        Version {creation.version.name} (Updated{' '}
-                                        <time dateTime={creation.version.datetime}>{creation.version.date}</time>)
+                                    <p className="mt-2 text-sm text-gray-500 inline-flex items-center">
+                                        <img
+                                            className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 mr-1"
+                                            src={ensAvatar || ownerBlockie}
+                                            title={ensName}
+                                            alt={ensName}
+                                        />
+                                        <span className="mr-1">created at</span>
+                                        <time dateTime={data.createdAt}>
+                                            {format(data.createdAt, 'dd MMM, yyyy hh:mm a')}
+                                        </time>
                                     </p>
                                 </div>
 
-                                <div>
-                                    <h3 className="sr-only">Reviews</h3>
-                                    <div className="flex items-center">
-                                        {[0, 1, 2, 3, 4].map((rating) => (
-                                            <StarIcon
-                                                key={rating}
-                                                className={classNames(
-                                                    reviews.average > rating ? 'text-yellow-400' : 'text-gray-300',
-                                                    'h-5 w-5 flex-shrink-0',
-                                                )}
-                                                aria-hidden="true"
-                                            />
-                                        ))}
+                                {bought ? (
+                                    <div>
+                                        <p className="text-green-500">You have bought this work.</p>
                                     </div>
-                                    <p className="sr-only">{reviews.average} out of 5 stars</p>
-                                </div>
+                                ) : null}
                             </div>
 
-                            <p className="mt-6 text-gray-500">{creation.description}</p>
+                            <p className="mt-6 text-gray-500">{data.description}</p>
 
-                            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                                <button
-                                    type="button"
-                                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                                    onClick={() => setShowNotification(true)}
-                                >
-                                    Pay {creation.price}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-50 py-3 px-8 text-base font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                                    onClick={() => setOpenPreviewer(true)}
-                                >
-                                    Preview
-                                </button>
+                            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-1">
+                                {owned || bought ? (
+                                    <button
+                                        type="button"
+                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-50 py-3 px-8 text-base font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        onClick={() => setOpenPreviewer(true)}
+                                    >
+                                        Preview
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        onClick={async () => {
+                                            if (!isConnected) await connect()
+                                        }}
+                                    >
+                                        Pay {formatBalance(data.paymentTokenAmount * 10, 1, 2)} DAI for full-access
+                                    </button>
+                                )}
                             </div>
 
                             <div className="mt-10 border-t border-gray-200 pt-10">

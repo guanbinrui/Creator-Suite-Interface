@@ -341,7 +341,14 @@ export function Dashboard(props) {
                                 </Suspense>
                             }
                         />
-                        <Route path=":creationId/" element={<Creation />} />
+                        <Route
+                            path=":creationId/"
+                            element={
+                                <Suspense fallback={<Spinner />}>
+                                    <Creation />
+                                </Suspense>
+                            }
+                        />
                         <Route path="/*" element={<Navigate to="/creation" />} />
                     </Routes>
                 </main>
