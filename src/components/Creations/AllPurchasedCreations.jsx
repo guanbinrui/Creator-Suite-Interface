@@ -1,8 +1,8 @@
-import { Creation } from '../../Creation'
-import { Tabs } from '../../Tabs'
-import { Empty } from '../../Empty'
-import { Spinner } from '../../Spinner'
-import { useAllPurchasedCreations } from '../../../hooks/useAllPurchasedCreations'
+import { Creation } from '../Creation'
+import { Tabs } from '../Tabs'
+import { Empty } from '../Empty'
+import { Spinner } from '../Spinner'
+import { useAllPurchasedCreations } from '../../hooks/useAllPurchasedCreations'
 
 export function AllPurchasedCreations(props) {
     const { data, isValidating } = useAllPurchasedCreations(props.owner)

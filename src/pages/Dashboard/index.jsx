@@ -3,7 +3,7 @@ import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { useBlockie } from '../../hooks/useBlockie'
@@ -12,9 +12,11 @@ import { Creation } from '../../components/Creation'
 import { Spinner } from '../../components/Spinner'
 import { AllCreations } from '../../components/Creations/AllCreations'
 import { AllPurchasedCreations } from '../../components/Creations/AllPurchasedCreations'
+import { AllOwnedCreations } from '../../components/Creations/AllOwnedCreations'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
+    { name: 'Owned', href: '#/creation/owned', icon: SparklesIcon },
     { name: 'Purchased', href: '#/creation/purchased', icon: ShoppingBagIcon },
 ]
 
@@ -323,6 +325,14 @@ export function Dashboard(props) {
                             }
                         />
                         <Route path="create/" element={<Create />} />
+                        <Route
+                            path="owned/"
+                            element={
+                                <Suspense fallback={<Spinner />}>
+                                    <AllOwnedCreations title="Purchased" />
+                                </Suspense>
+                            }
+                        />
                         <Route
                             path="purchased/"
                             element={
