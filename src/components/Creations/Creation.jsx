@@ -1,6 +1,6 @@
 import { formatDistanceToNowStrict } from 'date-fns'
 import { Link } from 'react-router-dom'
-import { formatBalance } from '../../helpers/formatBalance'
+import { formatPrice } from '../../helpers/formatPrice'
 import { getFileType } from '../../helpers/getFileType'
 
 export function Creation(props) {
@@ -27,7 +27,7 @@ export function Creation(props) {
                         <p className="text-sm text-gray-900">
                             <span className="mr-1 text-gray-500">Price:</span>
                             <span className="font-medium">
-                                {formatBalance(props.paymentTokenAmount * 10, 1, 2)} DAI
+                                {formatPrice(props.paymentTokenAmount * 10, 'DAI')}
                             </span>
                         </p>
                     </div>
