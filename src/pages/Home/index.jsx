@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+
 export function Home() {
     return (
         <>
@@ -6,6 +7,9 @@ export function Home() {
             <ul>
                 <li>
                     <Link to="/creation">&gt; Creator Suite</Link>
+                </li>
+                <li>
+                    <Link to="/core-service">&gt; Core Service</Link>
                 </li>
             </ul>
         </>
