@@ -1,7 +1,7 @@
 /**
  * Delay to resolve a Promise
- * @param duration 
- * @returns 
+ * @param duration
+ * @returns
  */
 export function delay(duration = 0) {
     return new Promise((resolve) => {

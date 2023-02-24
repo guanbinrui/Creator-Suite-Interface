@@ -6,9 +6,9 @@ export function useAllCreations() {
     return useSWR(
         'useAllCreations',
         async () => {
-            await delay(3000)
+            await delay(1500)
             return getAllCreations()
         },
-        { suspense: true },
+        { suspense: true, revalidateOnFocus: true, revalidateOnMount: true },
     )
 }
