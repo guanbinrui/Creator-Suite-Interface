@@ -1,5 +1,4 @@
 import useSWR from 'swr'
-import { delay } from '../helpers/delay'
 import { getAllOwnedCreations } from '../database'
 
 /**
@@ -9,11 +8,10 @@ import { getAllOwnedCreations } from '../database'
  */
 export function useAllOwnedCreations(owner) {
     return useSWR(
-        'useAllOwnedCreations',
+        `useAllOwnedCreations_${owner}`,
         async () => {
-            await delay(1500)
             return getAllOwnedCreations(owner)
         },
-        { suspense: true, revalidateOnFocus: true, revalidateOnMount: true },
+        { suspense: true, revalidateOnFocus: false, revalidateOnMount: true },
     )
 }

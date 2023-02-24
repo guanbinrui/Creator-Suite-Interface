@@ -329,7 +329,7 @@ export function Dashboard(props) {
                             path="owned/"
                             element={
                                 <Suspense fallback={<Spinner />}>
-                                    <AllOwnedCreations title="Purchased" />
+                                    <AllOwnedCreations title="Owned" owner={address} />
                                 </Suspense>
                             }
                         />
@@ -337,7 +337,7 @@ export function Dashboard(props) {
                             path="purchased/"
                             element={
                                 <Suspense fallback={<Spinner />}>
-                                    <AllPurchasedCreations title="Purchased" />
+                                    <AllPurchasedCreations title="Purchased" owner={address} />
                                 </Suspense>
                             }
                         />

@@ -9,6 +9,7 @@ import { isZero } from '../../helpers/isZero'
 import { isValidAddress } from '../../helpers/isValidAddress'
 
 export function Create() {
+    const [success, setSuccess] = useState(false)
     const [showCreatedNotification, setShowCreatedNotification] = useState(false)
 
     const { address, isConnected } = useAccount()
@@ -18,7 +19,7 @@ export function Create() {
 
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [paymentTokenAddress, setPaymentTokenAddress] = useState('0x')
+    const [paymentTokenAddress, setPaymentTokenAddress] = useState('0x66b57885E8E9D84742faBda0cE6E3496055b012d')
     const [paymentTokenAmount, setPaymentTokenAmount] = useState('')
     const [attachments, setAttachments] = useState([])
 
@@ -27,7 +28,7 @@ export function Create() {
     const validationMessage = useMemo(() => {
         if (!name) return 'Please enter creation name.'
         if (!paymentTokenAddress) return 'Please select the price token.'
-        // if (!isValidAddress(paymentTokenAddress)) return 'Please select a valid price token.'
+        if (!isValidAddress(paymentTokenAddress)) return 'Please select a valid price token.'
         if (isZero(paymentTokenAmount)) return 'Please enter price.'
         if (!attachments.length) return 'Please upload your creation.'
         const attachment = attachments[0]
@@ -57,7 +58,11 @@ export function Create() {
 
     return (
         <>
-            <CreatedNotification show={showCreatedNotification} setShow={setShowCreatedNotification} />
+            <CreatedNotification
+                success={success}
+                show={showCreatedNotification}
+                setShow={setShowCreatedNotification}
+            />
             <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                 <form className="space-y-8 divide-y divide-gray-200">
                     <div className="space-y-8 divide-y divide-gray-200">
@@ -217,7 +222,22 @@ export function Create() {
                                         // connect wallet
                                         if (!isConnected) connect()
 
-                                        await trigger(creation)
+                                        try {
+                                            await trigger(creation)
+                                            setSuccess(true)
+
+                                            // reset
+                                            setName('')
+                                            setDescription('')
+                                            setPaymentTokenAddress('')
+                                            setPaymentTokenAmount('')
+                                            setAttachments([])
+                                            setSubmitted(false)
+                                        } catch (e) {
+                                            setSuccess(false)
+                                        } finally {
+                                            setShowCreatedNotification(true)
+                                        }
                                     }}
                                 >
                                     {submitted ? validationMessage || 'Complete Listing' : 'Complete Listing'}

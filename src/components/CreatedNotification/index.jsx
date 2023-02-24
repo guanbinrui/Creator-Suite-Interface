@@ -1,19 +1,21 @@
 import { Fragment, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 
 export function CreatedNotification(props) {
+    const { show, setShow, success } = props
+
     useEffect(() => {
-        if (!props.show) return
+        if (!show) return
 
         const timer = setTimeout(() => {
-            if (props.show) props.setShow(false)
+            if (show) setShow(false)
         }, 15000)
 
         return () => clearTimeout(timer)
-    }, [props.show])
+    }, [show])
 
     return (
         <>
@@ -25,7 +27,7 @@ export function CreatedNotification(props) {
                 <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
                     {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
                     <Transition
-                        show={props.show}
+                        show={show}
                         as={Fragment}
                         enter="transform ease-out duration-300 transition"
                         enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
@@ -38,26 +40,36 @@ export function CreatedNotification(props) {
                             <div className="p-4">
                                 <div className="flex items-start">
                                     <div className="flex-shrink-0">
-                                        <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+                                        {success ? (
+                                            <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+                                        ) : (
+                                            <XCircleIcon className="h-6 w-6 text-red-400" aria-hidden="true" />
+                                        )}
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
-                                        <p className="text-sm font-medium text-gray-900">Successfully Created!</p>
-                                        <p className="mt-1 text-sm text-gray-500">
-                                            You can view it in the{' '}
-                                            <Link to="/creation/purchased">
-                                                <span className="font-medium text-blue-600 hover:text-blue-500">
-                                                    Created
-                                                </span>
-                                            </Link>
-                                            .
+                                        <p className="text-sm font-medium text-gray-900">
+                                            {success ? 'Successfully Created!' : 'Create Failed'}
                                         </p>
+                                        {success ? (
+                                            <p className="mt-1 text-sm text-gray-500">
+                                                You can view it in the{' '}
+                                                <Link to="/creation/owned">
+                                                    <span className="font-medium text-blue-600 hover:text-blue-500">
+                                                        Owned
+                                                    </span>
+                                                </Link>
+                                                .
+                                            </p>
+                                        ) : (
+                                            <p className="mt-1 text-sm text-gray-500">Please try again later.</p>
+                                        )}
                                     </div>
                                     <div className="ml-4 flex flex-shrink-0">
                                         <button
                                             type="button"
                                             className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                             onClick={() => {
-                                                props.setShow(false)
+                                                setShow(false)
                                             }}
                                         >
                                             <span className="sr-only">Close</span>

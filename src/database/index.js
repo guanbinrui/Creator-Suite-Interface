@@ -2,28 +2,48 @@ import { chain, isNil, isEmpty } from 'lodash'
 import { createInstance } from 'localforage'
 import { isSameAddress } from '../helpers/isSameAddress'
 import { isValidAddress } from '../helpers/isValidAddress'
+import { delay } from '../helpers/delay'
 
 const store = createInstance({
     name: 'CreatorSuite',
 })
 
 function getNextCreationId() {
-    return store.length
+    return store.length()
 }
 
 function validateCreation(creation) {
+    // name
     if (!creation.name) throw new Error('No name.')
+    if (typeof creation.name !== 'string') throw new Error('Invalid name.')
+
+    // description
+    if (typeof creation.description !== 'string') throw new Error('Invalid description.')
+
+    // owner
     if (!creation.ownerAddress) throw new Error('No owner address.')
     if (!isValidAddress(creation.ownerAddress)) throw new Error('No a valid owner address.')
+
+    // payment token
     if (!creation.paymentTokenAddress) throw new Error('No payment token address.')
     if (!isValidAddress(creation.paymentTokenAddress)) throw new Error('No a valid payment token address.')
     if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
+
+    // buyers
+    if (!Array.isArray(creation.buyerAddresses)) throw new Error('No buyer addresses.')
+    if (creation.buyerAddresses.some((x) => !isValidAddress(x))) throw new Error('Invalid buyer address.')
+
+    // attachments
     if (!creation.attachments.length) throw new Error('No attachments.')
     const attachment = creation.attachments[0]
-    if (!attachment.title) throw new Error('No attachment title.')
+    if (!attachment.name) throw new Error('No attachment name.')
     if (!attachment.content) throw new Error('No attachment content.')
+
+    // dates
     if (!creation.createdAt) throw new Error('No created at.')
     if (!creation.updatedAt) throw new Error('No updated at.')
+
+    return creation
 }
 
 /**
@@ -34,20 +54,23 @@ function validateCreation(creation) {
  * @param {string} paymentTokenAddress
  * @param {string} paymentTokenAmount
  * @param {string[]} attachments
+ * @param {string[]} buyerAddresses
  * @returns
  */
 export async function createCreation(initials) {
+    await delay(1500)
+
+    const id = await getNextCreationId()
     const now = Date.now()
     const creation = {
         ...initials,
+        attachments: initials.attachments ?? [],
+        buyerAddresses: initials.buyerAddresses ?? [],
         createdAt: now,
         updatedAt: now,
     }
-    validateCreation(creation)
 
-    const id = await getNextCreationId()
-
-    await store.setItem(id, creation)
+    await store.setItem(id, validateCreation(creation))
     return store.getItem(id)
 }
 
@@ -61,16 +84,21 @@ export async function updateCreation(id, updates) {
     const creation = await getCreation(id)
     if (!creation) throw new Error(`Cannnot find ${id}.`)
 
-    await store.setItem(id, {
+    const mergedCreation = {
         ...creation,
         ...chain(updates)
             .omitBy(isNil)
             .omitBy(isNaN)
             .omitBy(isEmpty)
-            .omitBy((x) => (typeof x === 'string') & (x === '')),
+            .omitBy((x) => x === ''),
+        attachments: creation.attachments,
+        buyerAddresses: chain([...creation.buyerAddresses, ...updates.buyerAddresses])
+            .filter((x) => isValidAddress(x))
+            .unionBy((y) => y.toLowerCase()),
         updatedAt: Date.now(),
-    })
+    }
 
+    await store.setItem(id, validateCreation(mergedCreation))
     return getCreation(id)
 }
 
@@ -101,10 +129,15 @@ export function getCreation(id) {
 export async function getAllCreations() {
     const creations = []
 
+    await delay(1500)
     await store.iterate((value, key, iterationNumber) => {
-        value.push(value)
+        creations.push({
+            id: key,
+            ...value,
+        })
     })
-    return creations
+
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
 }
 
 /**
@@ -114,13 +147,23 @@ export async function getAllCreations() {
  */
 export async function getAllOwnedCreations(owner) {
     const creations = []
+    if (!isValidAddress(owner)) return creations
 
+    await delay(1500)
     await store.iterate((value, key, iterationNumber) => {
-        if (isSameAddress(value.owner, key)) {
-            creations.push(value)
+        console.log({
+            key,
+            value,
+        })
+        if (isSameAddress(value.ownerAddress, owner)) {
+            creations.push({
+                id: key,
+                ...value,
+            })
         }
     })
-    return creations
+
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
 }
 
 /**
@@ -130,11 +173,18 @@ export async function getAllOwnedCreations(owner) {
  */
 export async function getAllPurchasedCreations(owner) {
     const creations = []
+    if (!isValidAddress(owner)) return creations
 
+    await delay(1500)
     await store.iterate((value, key, iterationNumber) => {
-        if (value.buyerAddresses.some((x) => isSameAddress(x, key))) {
-            creations.push(value)
+        const { buyerAddresses = [] } = value
+        if (buyerAddresses.some((x) => isSameAddress(x, owner))) {
+            creations.push({
+                id: key,
+                ...value,
+            })
         }
     })
-    return creations
+
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
 }

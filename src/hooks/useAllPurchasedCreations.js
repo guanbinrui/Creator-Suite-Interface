@@ -1,5 +1,4 @@
 import useSWR from 'swr'
-import { delay } from '../helpers/delay'
 import { getAllPurchasedCreations } from '../database'
 
 /**
@@ -9,7 +8,6 @@ import { getAllPurchasedCreations } from '../database'
  */
 export function useAllPurchasedCreations(owner) {
     return useSWR(`useAllPurchasedCreations_${owner}`, async () => {
-        await delay(1500)
         return getAllPurchasedCreations(owner)
     })
 }

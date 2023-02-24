@@ -94,12 +94,14 @@ function classNames(...classes) {
 }
 
 export function Creation() {
-    const [openPreviewer, setOpenPreviewer] = useState(false)
+    const [success, setSuccess] = useState(false)
     const [showNotification, setShowNotification] = useState(false)
+
+    const [openPreviewer, setOpenPreviewer] = useState(false)
 
     return (
         <>
-            <PurchasedNotification show={showNotification} setShow={setShowNotification} />
+            <PurchasedNotification success={success} show={showNotification} setShow={setShowNotification} />
             <Previewer title={creation.name} open={openPreviewer} setOpen={setOpenPreviewer} />
             <div className="bg-white">
                 <div className="mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
