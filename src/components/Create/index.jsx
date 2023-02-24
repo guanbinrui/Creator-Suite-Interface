@@ -70,8 +70,8 @@ export function Create() {
                             <div>
                                 <h3 className="text-2xl font-medium leading-6 text-gray-900">List for sale</h3>
                                 <p className="mt-1 text-sm text-gray-500">
-                                    Your work will be stored in an encrypted form on the server and can only be viewed
-                                    by anyone who makes a payment through a smart contract.
+                                    Your creation will be stored in an encrypted form on the server and can only be
+                                    viewed by anyone who makes a payment through a smart contract.
                                 </p>
                             </div>
 
@@ -149,7 +149,7 @@ export function Create() {
 
                                 <div className="sm:col-span-6">
                                     <label htmlFor="cover-photo" className="block text-sm font-medium text-gray-700">
-                                        Upload your work
+                                        Upload your creation
                                     </label>
                                     <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
                                         <div className="space-y-1 text-center">

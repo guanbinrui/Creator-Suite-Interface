@@ -12,6 +12,7 @@ import { useCreation } from '../../hooks/useCreation'
 import { Spinner } from '../Spinner'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
+import { Markdown } from '../Markdown'
 
 const creation = {
     name: 'Application UI Icon Pack',
@@ -128,7 +129,12 @@ export function Creation() {
     return (
         <>
             <PurchasedNotification success={success} show={showNotification} setShow={setShowNotification} />
-            <Previewer title={creation.name} open={openPreviewer} setOpen={setOpenPreviewer} />
+            <Previewer
+                title={data.name}
+                attachment={data.attachments[0]}
+                open={openPreviewer}
+                setOpen={setOpenPreviewer}
+            />
             <div className="bg-white">
                 <div className="mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                     {/* Product */}
@@ -176,7 +182,9 @@ export function Creation() {
                                 ) : null}
                             </div>
 
-                            <p className="mt-6 text-gray-500">{data.description}</p>
+                            <div className="mt-6 text-gray-500">
+                                <Markdown>{data.description}</Markdown>
+                            </div>
 
                             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-1">
                                 {owned || bought ? (

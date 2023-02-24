@@ -1,8 +1,12 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { getFileType } from '../../helpers/getFileType'
+import { Markdown } from '../Markdown'
 
 export function Previewer(props) {
+    const type = getFileType(props.attachment)
+
     return (
         <Transition.Root show={props.open} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={() => props.setOpen(false)}>
@@ -53,9 +57,18 @@ export function Previewer(props) {
                                             {/* Replace with your content */}
                                             <div className="absolute inset-0 px-4 sm:px-6">
                                                 <div
-                                                    className="h-full border-2 border-dashed border-gray-200"
+                                                    className="h-full border-2 border-dashed border-gray-200 flex items-center justify-center"
                                                     aria-hidden="true"
-                                                />
+                                                >
+                                                    {type === 'img' ? (
+                                                        <img
+                                                            className="max-w-full max-h-full"
+                                                            src={props.attachment.content}
+                                                        />
+                                                    ) : type === 'txt' || type === 'md' ? (
+                                                        <Markdown>{props.attachment.content}</Markdown>
+                                                    ) : null}
+                                                </div>
                                             </div>
                                             {/* /End replace */}
                                         </div>

@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js"
+import BigNumber from 'bignumber.js'
 
 export function formatPrice(amount, symbol) {
     const _amount = new BigNumber(amount ?? '0')
