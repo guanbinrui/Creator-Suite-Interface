@@ -1,17 +1,17 @@
+import { chain, isNil, isEmpty } from 'lodash'
 import { createInstance } from 'localforage'
 import { isSameAddress } from '../helpers/isSameAddress'
-import { chain, isNil, isNull, isUndefined, omitBy, wrap } from 'lodash'
 
 const store = createInstance({
     name: 'CreatorSuite',
 })
 
 export function validateCreation(creation) {
-    if (!name) throw new Error('No name.')
-    if (!ownerAddress) throw new Error('No owner address.')
-    if (!paymentTokenAddress) throw new Error('No payment token address.')
-    if (!paymentTokenAmount) throw new Error('No payment token amount.')
-    if (!attachments.length) throw new Error('No attachments.')
+    if (!creation.name) throw new Error('No name.')
+    if (!creation.ownerAddress) throw new Error('No owner address.')
+    if (!creation.paymentTokenAddress) throw new Error('No payment token address.')
+    if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
+    if (!creation.attachments.length) throw new Error('No attachments.')
 }
 
 /**

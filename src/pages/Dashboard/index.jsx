@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, Suspense, useState } from 'react'
 import { Route, Routes, Navigate, Link, useNavigate } from 'react-router-dom'
 import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -10,6 +10,7 @@ import { useBlockie } from '../../hooks/useBlockie'
 import { Create } from '../../components/Create'
 import { Creation } from '../../components/Creation'
 import { Creations } from '../../components/Creations'
+import { Spinner } from '../../components/Spinner'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
@@ -355,7 +356,14 @@ export function Dashboard(props) {
                         </div>
                     </div>
                     <Routes>
-                        <Route path="/" element={<Creations title="Creations" />} />
+                        <Route
+                            path="/"
+                            element={
+                                <Suspense fallback={<Spinner />}>
+                                    <Creations title="Creations" />
+                                </Suspense>
+                            }
+                        />
                         <Route path="create/" element={<Create />} />
                         <Route path="purchased/" element={<Creations title="Purchased" />} />
                         <Route path=":creationId/" element={<Creation />} />

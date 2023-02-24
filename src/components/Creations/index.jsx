@@ -1,6 +1,7 @@
 import { Creation } from './Creation'
 import { Tabs } from '../Tabs'
 import { Empty } from '../Empty'
+import { useAllCreations } from '../../hooks/useAllCreations'
 
 const creations = [
     {
@@ -43,15 +44,10 @@ const creations = [
 ]
 
 export function Creations(props) {
-    if (Math.random() < 0.5) {
-        return (
-            <div className="bg-white py-12 sm:py-12">
-                <div className="mx-auto max-w-2xl py-24 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-                    <Empty />
-                </div>
-            </div>
-        )
-    }
+    const { data } = useAllCreations()
+
+    if (!data.length) return <Empty />
+
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
