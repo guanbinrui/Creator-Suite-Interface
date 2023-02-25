@@ -1,6 +1,6 @@
 import { Fragment, Suspense, useState } from 'react'
 import { Route, Routes, Navigate, Link } from 'react-router-dom'
-import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
@@ -25,6 +25,11 @@ function classNames(...classes) {
 }
 
 export function Dashboard(props) {
+    console.log({
+        hash: window.location.hash,
+        navigationItem: navigation.find((x) => x.href === window.location.hash) ?? navigation[0],
+    })
+
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [currentNavigation, setCurrentNavigation] = useState(
         (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
@@ -32,7 +37,6 @@ export function Dashboard(props) {
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)
-    const { data: balance } = useBalance({ address })
     const { data: ensAvatar } = useEnsAvatar({ address })
     const { data: ensName } = useEnsName({ address })
 
@@ -202,7 +206,20 @@ export function Dashboard(props) {
                                                 Create
                                             </a>
                                         )}
-                                    </Menu.Item>{' '}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <a
+                                                href="#/creation/owned"
+                                                className={classNames(
+                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                    'block px-4 py-2 text-sm',
+                                                )}
+                                            >
+                                                Owned
+                                            </a>
+                                        )}
+                                    </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
                                             <a
@@ -337,7 +354,7 @@ export function Dashboard(props) {
                             path="purchased/"
                             element={
                                 <Suspense fallback={<Spinner />}>
-                                    <AllPurchasedCreations title="Purchased" owner={address} />
+                                    <AllPurchasedCreations title="Purchased" buyer={address} />
                                 </Suspense>
                             }
                         />

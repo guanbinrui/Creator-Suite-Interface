@@ -14,7 +14,6 @@ import { Markdown } from '../Markdown'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
 import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
-import { Dots } from '../Dots'
 
 const creation = {
     name: 'Application UI Icon Pack',
