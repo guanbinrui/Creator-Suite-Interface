@@ -15,3 +15,5 @@ body {
         /* ... */
     }
 }
+
+@import url('./markdown.css');

@@ -10,9 +10,9 @@ import { Previewer } from '../Previewer'
 import { useBlockie } from '../../hooks/useBlockie'
 import { useCreation } from '../../hooks/useCreation'
 import { Spinner } from '../Spinner'
+import { Markdown } from '../Markdown'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
-import { Markdown } from '../Markdown'
 
 const creation = {
     name: 'Application UI Icon Pack',
@@ -117,11 +117,11 @@ export function Creation() {
         connector: new InjectedConnector(),
     })
 
-    const ownerBlockie = useBlockie(data.ownerAddress)
-    const { data: ensName } = useEnsName({ address: data.ownerAddress })
-    const { data: ensAvatar } = useEnsAvatar({ address: data.ownerAddress })
-    const owned = isSameAddress(data.ownerAddress, address)
-    const bought = (data.buyerAddresses ?? []).includes(address)
+    const ownerBlockie = useBlockie(data?.ownerAddress)
+    const { data: ensName } = useEnsName({ address: data?.ownerAddress })
+    const { data: ensAvatar } = useEnsAvatar({ address: data?.ownerAddress })
+    const owned = isSameAddress(data?.ownerAddress, address)
+    const bought = (data?.buyerAddresses ?? []).includes(address)
 
     if (isValidating) return <Spinner />
     if (!data) return null

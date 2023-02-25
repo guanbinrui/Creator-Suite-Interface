@@ -4,12 +4,32 @@ import { isSameAddress } from '../helpers/isSameAddress'
 import { isValidAddress } from '../helpers/isValidAddress'
 import { delay } from '../helpers/delay'
 
-const store = createInstance({
+const creationStore = createInstance({
     name: 'CreatorSuite',
 })
 
-function getNextCreationId() {
-    return store.length()
+const counterStore = createInstance({
+    name: 'Counter',
+})
+
+async function getNextCreationId() {
+    const counter = await counterStore.getItem('counter')
+
+    console.log('DEBUG: counter')
+    console.log({
+        counter,
+    })
+
+    if (counter === null) {
+        await counterStore.setItem('counter', 0)
+    } else {
+        await counterStore.setItem('counter', counter + 1)
+    }
+    return counterStore.getItem('counter')
+}
+
+function isRemoved(creation) {
+    return creation && creation.createdAt === 0
 }
 
 function validateCreation(creation) {
@@ -70,8 +90,8 @@ export async function createCreation(initials) {
         updatedAt: now,
     }
 
-    await store.setItem(id, validateCreation(creation))
-    return store.getItem(id)
+    await creationStore.setItem(id, validateCreation(creation))
+    return creationStore.getItem(id)
 }
 
 /**
@@ -98,7 +118,7 @@ export async function updateCreation(id, updates) {
         updatedAt: Date.now(),
     }
 
-    await store.setItem(id, validateCreation(mergedCreation))
+    await creationStore.setItem(id, validateCreation(mergedCreation))
     return getCreation(id)
 }
 
@@ -110,7 +130,11 @@ export async function removeCreation(id) {
     const creation = await getCreation(id)
     if (!creation) throw new Error(`Cannnot find ${id}.`)
 
-    await store.removeItem(id)
+    await creationStore.setItem(id, {
+        ...creation,
+        // tag a removed creation
+        createdAt: 0,
+    })
 }
 
 /**
@@ -119,12 +143,10 @@ export async function removeCreation(id) {
  * @returns
  */
 export async function getCreation(id) {
-    console.log('DEBUG: getCreation')
-    console.log({
-        id,
-    })
     await delay(1500)
-    return store.getItem(id)
+    const creation = await creationStore.getItem(id)
+    if (isRemoved(creation)) return
+    return creation
 }
 
 /**
@@ -135,14 +157,14 @@ export async function getAllCreations() {
     const creations = []
 
     await delay(1500)
-    await store.iterate((value, key, iterationNumber) => {
+    await creationStore.iterate((value, key, iterationNumber) => {
         creations.push({
             id: key,
             ...value,
         })
     })
 
-    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt).filter((x) => !isRemoved(x))
 }
 
 /**
@@ -155,7 +177,7 @@ export async function getAllOwnedCreations(owner) {
     if (!isValidAddress(owner)) return creations
 
     await delay(1500)
-    await store.iterate((value, key, iterationNumber) => {
+    await creationStore.iterate((value, key, iterationNumber) => {
         console.log({
             key,
             value,
@@ -168,7 +190,7 @@ export async function getAllOwnedCreations(owner) {
         }
     })
 
-    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt).filter((x) => !isRemoved(x))
 }
 
 /**
@@ -181,7 +203,7 @@ export async function getAllPurchasedCreations(owner) {
     if (!isValidAddress(owner)) return creations
 
     await delay(1500)
-    await store.iterate((value, key, iterationNumber) => {
+    await creationStore.iterate((value, key, iterationNumber) => {
         const { buyerAddresses = [] } = value
         if (buyerAddresses.some((x) => isSameAddress(x, owner))) {
             creations.push({
@@ -191,5 +213,5 @@ export async function getAllPurchasedCreations(owner) {
         }
     })
 
-    return creations.sort((a, z) => z.updatedAt - a.updatedAt)
+    return creations.sort((a, z) => z.updatedAt - a.updatedAt).filter((x) => !isRemoved(x))
 }

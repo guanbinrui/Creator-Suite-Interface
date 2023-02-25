@@ -57,7 +57,7 @@ export function Previewer(props) {
                                             {/* Replace with your content */}
                                             <div className="absolute inset-0 px-4 sm:px-6">
                                                 <div
-                                                    className="h-full border-2 border-dashed border-gray-200 flex items-center justify-center"
+                                                    className="h-full border-2 border-solid border-gray-200 flex items-center justify-center"
                                                     aria-hidden="true"
                                                 >
                                                     {type === 'img' ? (
@@ -66,7 +66,9 @@ export function Previewer(props) {
                                                             src={props.attachment.content}
                                                         />
                                                     ) : type === 'txt' || type === 'md' ? (
-                                                        <Markdown>{props.attachment.content}</Markdown>
+                                                        <div className="overflow-auto max-h-full px-4 py-4">
+                                                            <Markdown>{props.attachment.content}</Markdown>
+                                                        </div>
                                                     ) : null}
                                                 </div>
                                             </div>
