@@ -5,12 +5,12 @@ import { useAccount, useConnect, useEnsAvatar, useEnsName } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PurchasedNotification } from '../PurchasedNotification'
 import { Previewer } from '../Previewer'
-import { useBlockie } from '../../hooks/useBlockie'
-import { useCreation } from '../../hooks/useCreation'
 import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
+import { useBlockie } from '../../hooks/useBlockie'
+import { useCreation } from '../../hooks/useCreation'
 import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
 
 const license = {
@@ -63,7 +63,7 @@ export function Creation() {
     const owned = isSameAddress(data?.ownerAddress, address)
     const bought = (data?.buyerAddresses ?? []).includes(address)
 
-    const { trigger, isMutating } = usePurchaseCreation(creationId, address)
+    const { trigger, isMutating } = usePurchaseCreation(creationId, address, '')
 
     if (isValidating) return <Spinner />
     if (!data) return null

@@ -7,6 +7,7 @@ import { delay } from '../helpers/delay'
 
 const creationStore = createInstance({
     name: 'CreatorSuite',
+    version: 2,
 })
 
 function isRemoved(creation) {
@@ -14,6 +15,9 @@ function isRemoved(creation) {
 }
 
 function validateCreation(creation) {
+    // id
+    if (!creation.id) throw new Error('No id.')
+
     // name
     if (!creation.name) throw new Error('No name.')
     if (typeof creation.name !== 'string') throw new Error('Invalid name.')
@@ -31,8 +35,8 @@ function validateCreation(creation) {
     if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
 
     // buyers
-    if (!Array.isArray(creation.buyerAddresses)) throw new Error('No buyer addresses.')
-    if (creation.buyerAddresses.some((x) => !isValidAddress(x))) throw new Error('Invalid buyer address.')
+    if (!Array.isArray(creation.buyers)) throw new Error('No buyer addresses.')
+    if (creation.buyers.some((x) => !isValidAddress(x.address))) throw new Error('Invalid buyer address.')
 
     // attachments
     if (!creation.attachments.length) throw new Error('No attachments.')
@@ -55,49 +59,66 @@ function validateCreation(creation) {
  * @param {string} paymentTokenAddress
  * @param {string} paymentTokenAmount
  * @param {string[]} attachments
- * @param {string[]} buyerAddresses
+ * @param {string[]} buyers
  * @returns
  */
 export async function createCreation(initials) {
     await delay(1500)
 
-    const id = await getNextCount()
-    const now = Date.now()
-    const creation = {
-        ...initials,
-        attachments: initials.attachments ?? [],
-        buyerAddresses: initials.buyerAddresses ?? [],
-        createdAt: now,
-        updatedAt: now,
-    }
+    const creationId = await getNextCount()
+    const creation = await getCreation(creationId)
+    if (creation) throw new Error('Already exists.')
 
-    await creationStore.setItem(id, validateCreation(creation))
-    return creationStore.getItem(id)
+    const now = Date.now()
+
+    await creationStore.setItem(
+        creationId,
+        validateCreation({
+            ...initials,
+            id: creationId,
+            attachments: initials.attachments ?? [],
+            buyers: initials.buyers ?? [],
+            createdAt: now,
+            updatedAt: now,
+        }),
+    )
+    return creationStore.getItem(creationId)
 }
 
-export async function purchaseCreation(id, buyerAddress) {
-    const creation = await getCreation(id)
-    if (!creation) throw new Error(`Cannnot find ${id}.`)
+/**
+ * Purchase creation
+ * @param {string} creationId
+ * @param {string} buyer buyer address
+ * @returns
+ */
+export async function purchaseCreation(creationId, buyer, transactionHash) {
+    const creation = await getCreation(creationId)
+    if (!creation) throw new Error('Cannnot find creation.')
 
-    if (!isValidAddress(buyerAddress)) throw new Error('Invalid buyer address.')
+    if (!isValidAddress(buyer)) throw new Error('Invalid buyer address.')
 
     // the buyer have bought the creation
-    if (creation.buyerAddresses.some((x) => isSameAddress(x, buyerAddress))) return creation
+    if (creation.buyers.some((x) => isSameAddress(x.address, buyer))) return creation
 
-    return updateCreation(id, {
-        buyerAddresses: [buyerAddress],
+    return updateCreation(creationId, {
+        buyers: [
+            {
+                address: buyer,
+                transactionHash,
+            },
+        ],
     })
 }
 
 /**
  * Update a preexist creation
- * @param {string} id
+ * @param {string} creationId
  * @param {object} updates
  * @returns
  */
-export async function updateCreation(id, updates) {
-    const creation = await getCreation(id)
-    if (!creation) throw new Error(`Cannnot find ${id}.`)
+export async function updateCreation(creationId, updates) {
+    const creation = await getCreation(creationId)
+    if (!creation) throw new Error('Cannnot find creation.')
 
     const mergedCreation = {
         ...creation,
@@ -108,26 +129,27 @@ export async function updateCreation(id, updates) {
             .omitBy((x) => x === '')
             .value(),
         attachments: creation.attachments,
-        buyerAddresses: chain([...creation.buyerAddresses, ...updates.buyerAddresses])
-            .filter((x) => isValidAddress(x))
-            .uniqBy((y) => y.toLowerCase())
+        buyers: chain([...creation.buyers, ...updates.buyers])
+            .filter((x) => isValidAddress(x.address))
+            .uniqBy((y) => y.address.toLowerCase())
             .value(),
         updatedAt: Date.now(),
     }
 
-    await creationStore.setItem(id, validateCreation(mergedCreation))
-    return getCreation(id)
+    await creationStore.setItem(creationId, validateCreation(mergedCreation))
+    return getCreation(creationId)
 }
 
 /**
  * Delete a creation
- * @param {string} id
+ * @param {string} creationId
  */
-export async function removeCreation(id) {
-    const creation = await getCreation(id)
-    if (!creation) throw new Error(`Cannnot find ${id}.`)
+export async function removeCreation(creationId) {
+    await delay(1500)
+    const creation = await getCreation(creationId)
+    if (!creation) throw new Error('Cannnot find creation.')
 
-    await creationStore.setItem(id, {
+    await creationStore.setItem(creationId, {
         ...creation,
         // tag a removed creation
         createdAt: 0,
@@ -136,12 +158,14 @@ export async function removeCreation(id) {
 
 /**
  * Fetch a creation
- * @param {string} id
+ * @param {string} creationId
  * @returns
  */
-export async function getCreation(id) {
-    await delay(1500)
-    const creation = await creationStore.getItem(id)
+export async function getCreation(creationId) {
+    // other db methods depend on getCreation()
+    // await delay(1500)
+
+    const creation = await creationStore.getItem(creationId)
     if (isRemoved(creation)) return
     return creation
 }
@@ -154,7 +178,7 @@ export async function getAllCreations() {
     const creations = []
 
     await delay(1500)
-    await creationStore.iterate((value, key, iterationNumber) => {
+    await creationStore.iterate((value, key) => {
         creations.push({
             id: key,
             ...value,
@@ -170,11 +194,12 @@ export async function getAllCreations() {
  * @returns
  */
 export async function getAllOwnedCreations(owner) {
+    if (!isValidAddress(owner)) return []
+
     const creations = []
-    if (!isValidAddress(owner)) return creations
 
     await delay(1500)
-    await creationStore.iterate((value, key, iterationNumber) => {
+    await creationStore.iterate((value, key) => {
         console.log({
             key,
             value,
@@ -192,16 +217,17 @@ export async function getAllOwnedCreations(owner) {
 
 /**
  * Fetch all creations purchased by the buyer
- * @param {string} buyer
+ * @param {string} buyer buyer address
  * @returns
  */
 export async function getAllPurchasedCreations(buyer) {
+    if (!isValidAddress(buyer)) return []
+
     const creations = []
-    if (!isValidAddress(buyer)) return creations
 
     await delay(1500)
-    await creationStore.iterate((value, key, iterationNumber) => {
-        if (value.buyerAddresses.some((x) => isSameAddress(x, buyer))) {
+    await creationStore.iterate((value, key) => {
+        if (value.buyers.some((x) => isSameAddress(x.address, buyer))) {
             creations.push({
                 id: key,
                 ...value,
