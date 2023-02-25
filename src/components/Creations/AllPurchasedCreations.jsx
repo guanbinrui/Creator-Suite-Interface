@@ -1,11 +1,11 @@
-import { Creation } from '../Creation'
+import { Creation } from './Creation'
 import { Tabs } from '../Tabs'
 import { Empty } from '../Empty'
 import { Spinner } from '../Spinner'
 import { useAllPurchasedCreations } from '../../hooks/useAllPurchasedCreations'
 
 export function AllPurchasedCreations(props) {
-    const { data, isValidating } = useAllPurchasedCreations(props.owner)
+    const { data, isValidating } = useAllPurchasedCreations(props.buyer)
 
     if (isValidating) return <Spinner />
     if (!data.length) return <Empty />
