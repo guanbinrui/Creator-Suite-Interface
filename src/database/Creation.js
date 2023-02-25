@@ -16,7 +16,7 @@ function isRemoved(creation) {
 
 function validateCreation(creation) {
     // id
-    if (!creation.id) throw new Error('No id.')
+    if (typeof creation.id === 'undefined') throw new Error('No id.')
 
     // name
     if (!creation.name) throw new Error('No name.')

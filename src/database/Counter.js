@@ -2,6 +2,7 @@ import { createInstance } from 'localforage'
 
 const counterStore = createInstance({
     name: 'Counter',
+    version: 2,
 })
 
 export async function getNextCount() {

@@ -1,5 +1,5 @@
-import { Fragment, Suspense, useState } from 'react'
-import { Route, Routes, Navigate, Link } from 'react-router-dom'
+import { Fragment, Suspense, useEffect, useState } from 'react'
+import { Route, Routes, Navigate, Link, useLocation } from 'react-router-dom'
 import { useAccount, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { Dialog, Menu, Transition } from '@headlessui/react'
@@ -24,16 +24,23 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export function Dashboard(props) {
-    console.log({
-        hash: window.location.hash,
-        navigationItem: navigation.find((x) => x.href === window.location.hash) ?? navigation[0],
-    })
+function getCurrentNavigation() {
+    const item = navigation.find((x) => x.href === window.location.hash) ?? navigation[0]
+    return item.name
+}
 
+export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [currentNavigation, setCurrentNavigation] = useState(
-        (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
-    )
+
+    const [currentNavigation, setCurrentNavigation] = useState(getCurrentNavigation())
+
+    const location = useLocation()
+    useEffect(() => {
+        console.log({
+            navigation: getCurrentNavigation(),
+        })
+        setCurrentNavigation(getCurrentNavigation())
+    }, [location])
 
     const { address, isConnected } = useAccount()
     const addressBlockie = useBlockie(address)

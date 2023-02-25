@@ -61,7 +61,7 @@ export function Creation() {
     const { data: ensName } = useEnsName({ address: data?.ownerAddress })
     const { data: ensAvatar } = useEnsAvatar({ address: data?.ownerAddress })
     const owned = isSameAddress(data?.ownerAddress, address)
-    const bought = (data?.buyerAddresses ?? []).includes(address)
+    const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
 
     const { trigger, isMutating } = usePurchaseCreation(creationId, address, '')
 
@@ -114,9 +114,9 @@ export function Creation() {
                                     <div>
                                         <p className="text-green-500">You have bought this creation.</p>
                                     </div>
-                                ) : data.buyerAddresses.length > 0 ? (
+                                ) : data.buyers.length > 0 ? (
                                     <div>
-                                        <p className="text-gray-500">{`${data.buyerAddresses.length} people purchased it.`}</p>
+                                        <p className="text-gray-500">{`${data.buyers.length} people purchased it.`}</p>
                                     </div>
                                 ) : null}
                             </div>
