@@ -13,36 +13,6 @@ import { useBlockie } from '../../hooks/useBlockie'
 import { useCreation } from '../../hooks/useCreation'
 import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
 
-const license = {
-    href: '#',
-    summary:
-        'For personal and professional use. You cannot resell or redistribute these icons in their original or modified state.',
-    content: `
-    <h4>Overview</h4>
-    
-    <p>For personal and professional use. You cannot resell or redistribute these icons in their original or modified state.</p>
-    
-    <ul role="list">
-    <li>You\'re allowed to use the icons in unlimited projects.</li>
-    <li>Attribution is not required to use the icons.</li>
-    </ul>
-    
-    <h4>What you can do with it</h4>
-    
-    <ul role="list">
-    <li>Use them freely in your personal and professional work.</li>
-    <li>Make them your own. Change the colors to suit your project or brand.</li>
-    </ul>
-    
-    <h4>What you can\'t do with it</h4>
-    
-    <ul role="list">
-    <li>Don\'t be greedy. Selling or distributing these icons in their original or modified state is prohibited.</li>
-    <li>Don\'t be evil. These icons cannot be used on websites or applications that promote illegal or immoral beliefs or activities.</li>
-    </ul>
-  `,
-}
-
 export function Creation() {
     const [success, setSuccess] = useState(false)
     const [showPurchasedNotification, setShowPruchasedNotification] = useState(false)
@@ -82,11 +52,11 @@ export function Creation() {
                 setOpen={setOpenPreviewer}
             />
             <div className="bg-white">
-                <div className="mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+                <div className="py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                     {/* Product */}
                     <div className="lg:grid lg:grid-cols-7 lg:grid-rows-1 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16">
                         {/* Product details */}
-                        <div className="mx-auto mt-14 max-w-2xl sm:mt-16 lg:col-span-7 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
+                        <div className="mx-auto w-4/5 mt-14 sm:mt-16 lg:col-span-7 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
                             <div className="flex flex-col-reverse">
                                 <div className="mt-4">
                                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -97,12 +67,16 @@ export function Creation() {
                                         Product information
                                     </h2>
                                     <p className="mt-2 text-sm text-gray-500 inline-flex items-center">
-                                        <img
-                                            className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 mr-1"
-                                            src={ensAvatar || ownerBlockie}
-                                            title={ensName || data.ownerAddress}
-                                            alt={ensName || data.ownerAddress}
-                                        />
+                                        {owned ? (
+                                            <span className="mr-1">You</span>
+                                        ) : (
+                                            <img
+                                                className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 mr-1"
+                                                src={ensAvatar || ownerBlockie}
+                                                title={ensName || data.ownerAddress}
+                                                alt={ensName || data.ownerAddress}
+                                            />
+                                        )}
                                         <span className="mr-1">created at</span>
                                         <time dateTime={data.createdAt}>
                                             {format(data.createdAt, 'dd MMM, yyyy hh:mm a')}
@@ -165,16 +139,6 @@ export function Creation() {
                                               )} DAI for full-access`}
                                     </button>
                                 )}
-                            </div>
-
-                            <div className="mt-10 border-t border-gray-200 pt-10">
-                                <h3 className="text-sm font-medium text-gray-900">License</h3>
-                                <p className="mt-4 text-sm text-gray-500">
-                                    {license.summary}{' '}
-                                    <a href={license.href} className="font-medium text-blue-600 hover:text-blue-500">
-                                        Read full license
-                                    </a>
-                                </p>
                             </div>
 
                             <div className="mt-10 border-t border-gray-200 pt-10">
