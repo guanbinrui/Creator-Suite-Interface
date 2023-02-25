@@ -12,7 +12,7 @@ export function Markdown(props) {
 
     return (
         <ReactMarkdown
-            className=""
+            className="markdown-body"
             remarkPlugins={[[RemarkGfm, { singleTilde: false }]]}
             rehypePlugins={[RehypeRaw]}
             linkTarget="_blank"
