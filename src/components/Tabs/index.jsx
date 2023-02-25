@@ -24,6 +24,8 @@ function classNames(...classes) {
 }
 
 export function Tabs() {
+    if (tabs.length) return <div />
+
     return (
         <div>
             <div className="sm:hidden">
@@ -56,7 +58,7 @@ export function Tabs() {
                         >
                             <tab.icon
                                 className={classNames(
-                                    tab.current ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500',
+                                    tab.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500',
                                     '-ml-0.5 h-5 w-5',
                                 )}
                                 aria-hidden="true"
