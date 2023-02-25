@@ -206,9 +206,7 @@ export function Create() {
 
                     <div className="pt-5">
                         <div className="flex justify-end">
-                            {isMutating ? (
-                                <Dots />
-                            ) : (
+                            {
                                 <button
                                     type="submit"
                                     className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:shadow-none"
@@ -223,7 +221,7 @@ export function Create() {
                                         if (!isConnected) connect()
 
                                         try {
-                                            await trigger(creation)
+                                            await trigger()
                                             setSuccess(true)
 
                                             // reset
@@ -233,16 +231,20 @@ export function Create() {
                                             setPaymentTokenAmount('')
                                             setAttachments([])
                                             setSubmitted(false)
-                                        } catch (e) {
+                                        } catch {
                                             setSuccess(false)
                                         } finally {
                                             setShowCreatedNotification(true)
                                         }
                                     }}
                                 >
-                                    {submitted ? validationMessage || 'Complete Listing' : 'Complete Listing'}
+                                    {isMutating
+                                        ? 'Creating...'
+                                        : submitted
+                                        ? validationMessage || 'Complete Listing'
+                                        : 'Complete Listing'}
                                 </button>
-                            )}
+                            }
                         </div>
                     </div>
                 </form>

@@ -13,6 +13,8 @@ import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
+import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
+import { Dots } from '../Dots'
 
 const creation = {
     name: 'Application UI Icon Pack',
@@ -105,12 +107,12 @@ function classNames(...classes) {
 
 export function Creation() {
     const [success, setSuccess] = useState(false)
-    const [showNotification, setShowNotification] = useState(false)
+    const [showPurchasedNotification, setShowPruchasedNotification] = useState(false)
 
     const [openPreviewer, setOpenPreviewer] = useState(false)
 
     const { creationId } = useParams()
-    const { data, isValidating } = useCreation(creationId)
+    const { data, isValidating, mutate } = useCreation(creationId)
 
     const { address, isConnected } = useAccount()
     const { connect } = useConnect({
@@ -123,12 +125,18 @@ export function Creation() {
     const owned = isSameAddress(data?.ownerAddress, address)
     const bought = (data?.buyerAddresses ?? []).includes(address)
 
+    const { trigger, isMutating } = usePurchaseCreation(creationId, address)
+
     if (isValidating) return <Spinner />
     if (!data) return null
 
     return (
         <>
-            <PurchasedNotification success={success} show={showNotification} setShow={setShowNotification} />
+            <PurchasedNotification
+                success={success}
+                show={showPurchasedNotification}
+                setShow={setShowPruchasedNotification}
+            />
             <Previewer
                 title={data.name}
                 attachment={data.attachments[0]}
@@ -177,7 +185,7 @@ export function Creation() {
 
                                 {bought ? (
                                     <div>
-                                        <p className="text-green-500">You have bought this work.</p>
+                                        <p className="text-green-500">You have bought this creation.</p>
                                     </div>
                                 ) : null}
                             </div>
@@ -198,12 +206,32 @@ export function Creation() {
                                 ) : (
                                     <button
                                         type="button"
-                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        disabled={isMutating}
                                         onClick={async () => {
                                             if (!isConnected) await connect()
+
+                                            try {
+                                                await trigger()
+                                                await mutate()
+                                                setSuccess(true)
+                                            } catch {
+                                                setSuccess(false)
+
+                                                // reset
+                                                setShowPruchasedNotification(false)
+                                            } finally {
+                                                setShowPruchasedNotification(true)
+                                            }
                                         }}
                                     >
-                                        Pay {formatBalance(data.paymentTokenAmount * 10, 1, 2)} DAI for full-access
+                                        {isMutating
+                                            ? 'Paying...'
+                                            : `Pay ${formatBalance(
+                                                  data.paymentTokenAmount * 10,
+                                                  1,
+                                                  2,
+                                              )} DAI for full-access`}
                                     </button>
                                 )}
                             </div>

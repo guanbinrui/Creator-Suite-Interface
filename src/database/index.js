@@ -94,6 +94,20 @@ export async function createCreation(initials) {
     return creationStore.getItem(id)
 }
 
+export async function purchaseCreation(id, buyerAddress) {
+    const creation = await getCreation(id)
+    if (!creation) throw new Error(`Cannnot find ${id}.`)
+
+    if (!isValidAddress(buyerAddress)) throw new Error('Invalid buyer address.')
+
+    // the buyer have bought the creation
+    if (creation.buyerAddresses.some((x) => isSameAddress(x, buyerAddress))) return creation
+
+    return updateCreation(id, {
+        buyerAddresses: [buyerAddress],
+    })
+}
+
 /**
  * Update a preexist creation
  * @param {string} id
@@ -110,11 +124,13 @@ export async function updateCreation(id, updates) {
             .omitBy(isNil)
             .omitBy(isNaN)
             .omitBy(isEmpty)
-            .omitBy((x) => x === ''),
+            .omitBy((x) => x === '')
+            .value(),
         attachments: creation.attachments,
         buyerAddresses: chain([...creation.buyerAddresses, ...updates.buyerAddresses])
             .filter((x) => isValidAddress(x))
-            .unionBy((y) => y.toLowerCase()),
+            .uniqBy((y) => y.toLowerCase())
+            .value(),
         updatedAt: Date.now(),
     }
 
