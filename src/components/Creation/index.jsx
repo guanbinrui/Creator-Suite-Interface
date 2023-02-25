@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import { useAccount, useConnect, useEnsAvatar, useEnsName } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
+import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { PurchasedNotification } from '../PurchasedNotification'
 import { Previewer } from '../Previewer'
 import { Spinner } from '../Spinner'
@@ -22,10 +21,7 @@ export function Creation() {
     const { creationId } = useParams()
     const { data, isValidating, mutate } = useCreation(creationId)
 
-    const { address, isConnected } = useAccount()
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
+    const { address } = useAccount()
 
     const ownerBlockie = useBlockie(data?.ownerAddress)
     const { data: ensName } = useEnsName({ address: data?.ownerAddress })
@@ -33,7 +29,7 @@ export function Creation() {
     const owned = isSameAddress(data?.ownerAddress, address)
     const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
 
-    const { trigger, isMutating } = usePurchaseCreation(creationId, address, '')
+    const { trigger, isMutating } = usePurchaseCreation(creationId, address)
 
     if (isValidating) return <Spinner />
     if (!data) return null
@@ -114,8 +110,6 @@ export function Creation() {
                                         className="flex w-1/2 max-w-sm items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                                         disabled={isMutating}
                                         onClick={async () => {
-                                            if (!isConnected) await connect()
-
                                             try {
                                                 await trigger()
                                                 await mutate()

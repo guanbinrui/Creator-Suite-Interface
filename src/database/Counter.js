@@ -5,13 +5,16 @@ const counterStore = createInstance({
     version: 2,
 })
 
-export async function getNextCount() {
+export async function getCount() {
     const counter = await counterStore.getItem('counter')
 
     if (counter === null) {
         await counterStore.setItem('counter', 0)
-    } else {
-        await counterStore.setItem('counter', counter + 1)
     }
     return counterStore.getItem('counter')
+}
+
+export async function commitCount() {
+    const count = await getCount()
+    return counterStore.setItem('counter', count + 1)
 }

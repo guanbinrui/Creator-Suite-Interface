@@ -3,7 +3,7 @@ import { getAllOwnedCreations } from '../database'
 
 /**
  * Use all owned creations
- * @param {string} owner
+ * @param {string} owner the owner address
  * @returns
  */
 export function useAllOwnedCreations(owner) {
