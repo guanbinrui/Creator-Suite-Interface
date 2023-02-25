@@ -1,7 +1,7 @@
-import { Fragment, Suspense, useState } from 'react'
-import { Route, Routes, Navigate, Link } from 'react-router-dom'
-import { useAccount, useBalance, useEnsAvatar, useEnsName, useConnect, useDisconnect } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
+import { Fragment, Suspense, useEffect, useState } from 'react'
+import { Route, Routes, Navigate, Link, useLocation } from 'react-router-dom'
+import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
+import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
@@ -13,6 +13,7 @@ import { Spinner } from '../../components/Spinner'
 import { AllCreations } from '../../components/Creations/AllCreations'
 import { AllPurchasedCreations } from '../../components/Creations/AllPurchasedCreations'
 import { AllOwnedCreations } from '../../components/Creations/AllOwnedCreations'
+import { connect, disconnect, switchNetwork } from '../../connections'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
@@ -24,22 +25,30 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
+function getCurrentNavigation() {
+    const item = navigation.find((x) => x.href === window.location.hash) ?? navigation[0]
+    return item.name
+}
+
 export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [currentNavigation, setCurrentNavigation] = useState(
-        (navigation.find((x) => x.href === window.location.hash) ?? navigation[0]).name,
-    )
 
+    // #region navigation
+    const [currentNavigation, setCurrentNavigation] = useState(getCurrentNavigation())
+
+    const location = useLocation()
+    useEffect(() => {
+        setCurrentNavigation(getCurrentNavigation())
+    }, [location])
+    // #endregion
+
+    // #region connection
     const { address, isConnected } = useAccount()
+    const { chain } = useNetwork()
     const addressBlockie = useBlockie(address)
-    const { data: balance } = useBalance({ address })
     const { data: ensAvatar } = useEnsAvatar({ address })
     const { data: ensName } = useEnsName({ address })
-
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
-    const { disconnect } = useDisconnect()
+    // #endregion
 
     return (
         <div className="min-h-full">
@@ -146,6 +155,7 @@ export function Dashboard(props) {
                         alt="Your Company"
                     />
                 </div>
+
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="mt-5 flex h-0 flex-1 flex-col overflow-y-auto pt-1">
                     {/* User account dropdown */}
@@ -202,7 +212,20 @@ export function Dashboard(props) {
                                                 Create
                                             </a>
                                         )}
-                                    </Menu.Item>{' '}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <a
+                                                href="#/creation/owned"
+                                                className={classNames(
+                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                    'block px-4 py-2 text-sm',
+                                                )}
+                                            >
+                                                Owned
+                                            </a>
+                                        )}
+                                    </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
                                             <a
@@ -305,13 +328,26 @@ export function Dashboard(props) {
                         <div className="flex sm:mt-0 sm:ml-4 items-center">
                             <button
                                 type="button"
-                                className="order-0 inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
-                                onClick={() => {
-                                    if (isConnected) disconnect()
-                                    else connect()
+                                className={`order-0 inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:order-1 sm:ml-3 ${
+                                    isConnected && chain.id !== polygonMumbai.id
+                                        ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                                        : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                                }`}
+                                onClick={async () => {
+                                    if (!isConnected) {
+                                        await connect()
+                                        return
+                                    }
+
+                                    if (chain.id === polygonMumbai.id) await disconnect()
+                                    else await switchNetwork()
                                 }}
                             >
-                                {isConnected ? 'Disconnect' : 'Connect Wallet'}
+                                {isConnected
+                                    ? chain.id === polygonMumbai.id
+                                        ? 'Disconnect'
+                                        : 'Wrong Network'
+                                    : 'Connect Wallet'}
                             </button>
                         </div>
                     </div>
@@ -337,7 +373,7 @@ export function Dashboard(props) {
                             path="purchased/"
                             element={
                                 <Suspense fallback={<Spinner />}>
-                                    <AllPurchasedCreations title="Purchased" owner={address} />
+                                    <AllPurchasedCreations title="Purchased" buyer={address} />
                                 </Suspense>
                             }
                         />

@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react'
 import { DocumentPlusIcon } from '@heroicons/react/24/outline'
-import { useAccount, useConnect } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { Dots } from '../Dots'
+import { useAccount } from 'wagmi'
 import { CreatedNotification } from '../CreatedNotification'
 import { useCreateCreation } from '../../hooks/useCreateCreation'
 import { isZero } from '../../helpers/isZero'
@@ -12,10 +10,7 @@ export function Create() {
     const [success, setSuccess] = useState(false)
     const [showCreatedNotification, setShowCreatedNotification] = useState(false)
 
-    const { address, isConnected } = useAccount()
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
+    const { address } = useAccount()
 
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
@@ -216,9 +211,6 @@ export function Create() {
                                         ev.stopPropagation()
 
                                         setSubmitted(true)
-
-                                        // connect wallet
-                                        if (!isConnected) connect()
 
                                         try {
                                             await trigger()

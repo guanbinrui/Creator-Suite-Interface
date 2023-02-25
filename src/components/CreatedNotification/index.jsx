@@ -52,7 +52,7 @@ export function CreatedNotification(props) {
                                         </p>
                                         {success ? (
                                             <p className="mt-1 text-sm text-gray-500">
-                                                You can view it in the{' '}
+                                                You can view it in{' '}
                                                 <Link to="/creation/owned">
                                                     <span className="font-medium text-blue-600 hover:text-blue-500">
                                                         Owned
