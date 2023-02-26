@@ -2,12 +2,13 @@ import { chain, isNil, isEmpty } from 'lodash'
 import { createInstance } from 'localforage'
 import { commitCount, getCount } from './Counter'
 import { isSameAddress } from '../helpers/isSameAddress'
+import { isGreaterThan } from '../helpers/isGreaterThan'
 import { isValidAddress } from '../helpers/isValidAddress'
 import { delay } from '../helpers/delay'
 
 const creationStore = createInstance({
     name: 'CreatorSuite',
-    version: 2,
+    version: 3,
 })
 
 function isRemoved(creation) {
@@ -17,6 +18,9 @@ function isRemoved(creation) {
 function validateCreation(creation) {
     // id
     if (typeof creation.id === 'undefined') throw new Error('No id.')
+
+    // asset id
+    if (typeof creation.assetId === 'undefined') throw new Error('No asset id.')
 
     // hash
     if (!creation.transactionHash) throw new Error('No transaction hash.')
@@ -33,9 +37,8 @@ function validateCreation(creation) {
     if (!isValidAddress(creation.ownerAddress)) throw new Error('No a valid owner address.')
 
     // payment token
-    if (!creation.paymentTokenAddress) throw new Error('No payment token address.')
     if (!isValidAddress(creation.paymentTokenAddress)) throw new Error('No a valid payment token address.')
-    if (!creation.paymentTokenAmount) throw new Error('No payment token amount.')
+    if (!isGreaterThan(creation.paymentTokenAmount || 0, 0)) throw new Error('Invalid payment token amount.')
 
     // buyers
     if (!Array.isArray(creation.buyers)) throw new Error('No buyer addresses.')
