@@ -1,6 +1,7 @@
 import './styles/index.css'
 
 import { HashRouter, Route, Routes } from 'react-router-dom'
+import { polygonMumbai } from '@wagmi/chains'
 import { Home } from './pages/Home/index.jsx'
 import { Error } from './pages/Error/index.jsx'
 import { Dashboard } from './pages/Dashboard/index.jsx'
@@ -8,7 +9,7 @@ import { WagmiProvider } from './contexts/Wagmi'
 
 function App() {
     return (
-        <WagmiProvider>
+        <WagmiProvider chainId={polygonMumbai.id}>
             <HashRouter>
                 <Routes>
                     <Route path="/">

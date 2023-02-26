@@ -1,12 +1,10 @@
 import { Fragment, Suspense, useEffect, useState } from 'react'
 import { Route, Routes, Navigate, Link, useLocation } from 'react-router-dom'
-import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
-import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
-import { useBlockie } from '../../hooks/useBlockie'
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Create } from '../../components/Create'
 import { Creation } from '../../components/Creation'
 import { Spinner } from '../../components/Spinner'
@@ -14,6 +12,7 @@ import { AllCreations } from '../../components/Creations/AllCreations'
 import { AllPurchasedCreations } from '../../components/Creations/AllPurchasedCreations'
 import { AllOwnedCreations } from '../../components/Creations/AllOwnedCreations'
 import { connect, disconnect, switchNetwork } from '../../connections'
+import { Account } from '../../components/Account'
 
 const navigation = [
     { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
@@ -45,9 +44,6 @@ export function Dashboard(props) {
     // #region connection
     const { address, isConnected } = useAccount()
     const { chain } = useNetwork()
-    const addressBlockie = useBlockie(address)
-    const { data: ensAvatar } = useEnsAvatar({ address })
-    const { data: ensName } = useEnsName({ address })
     // #endregion
 
     return (
@@ -160,35 +156,7 @@ export function Dashboard(props) {
                 <div className="mt-5 flex h-0 flex-1 flex-col overflow-y-auto pt-1">
                     {/* User account dropdown */}
                     <Menu as="div" className="relative inline-block px-3 text-left">
-                        {isConnected ? (
-                            <div>
-                                <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">
-                                    <span className="flex w-full items-center justify-between">
-                                        <span className="flex min-w-0 items-center justify-between space-x-3">
-                                            <img
-                                                className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                                                src={ensAvatar || addressBlockie}
-                                                alt={ensName}
-                                            />
-                                            <span className="flex min-w-0 flex-1 flex-col">
-                                                {ensName ? (
-                                                    <span className="truncate text-sm font-medium text-gray-900">
-                                                        {ensName}
-                                                    </span>
-                                                ) : null}
-                                                <span className="truncate text-sm text-gray-500">
-                                                    {formatEthereumAddress(address, 4)}
-                                                </span>
-                                            </span>
-                                        </span>
-                                        <ChevronUpDownIcon
-                                            className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </Menu.Button>
-                            </div>
-                        ) : null}
+                        {isConnected ? <Account address={address} /> : null}
                         <Transition
                             as={Fragment}
                             enter="transition ease-out duration-100"

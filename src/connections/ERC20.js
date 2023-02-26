@@ -11,7 +11,7 @@ export function balanceOf(address, owner) {
     if (!isValidAddress(owner)) throw new Error('Not a valid owner address.')
 
     return readContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address,
         abi: ERC20ABI,
         functionName: 'balanceOf',

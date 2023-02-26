@@ -19,7 +19,7 @@ function getSubscriptionContractAddress() {
 export function getAssetId(creator, contentId) {
     if (!isValidAddress(creator)) throw new Error('Not a valid creator address.')
     return readContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'getAssetId',
@@ -36,7 +36,7 @@ export function getAssetId(creator, contentId) {
 export function isQualified(owner, assetId) {
     if (!isValidAddress(owner)) throw new Error('Not a valid owner address.')
     return readContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'isQualified',
@@ -54,7 +54,7 @@ export function isQualified(owner, assetId) {
 export async function createAsset(contentId, paymentTokenAddress, paymentTokenAmount) {
     if (!isValidAddress(paymentTokenAddress)) throw new Error('Not a valid payment token address.')
     const config = await prepareWriteContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'createAsset',
@@ -73,7 +73,7 @@ export async function createAsset(contentId, paymentTokenAddress, paymentTokenAm
  */
 export async function purchaseAsset(assetId) {
     const config = await prepareWriteContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'purchaseAsset',
@@ -93,7 +93,7 @@ export async function purchaseAsset(assetId) {
  */
 export async function withdrawToken(paymentTokenAddress, paymentTokenAmount) {
     const config = await prepareWriteContract({
-        chainId: polygonMumbai.chainId,
+        chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'purchaseAsset',
