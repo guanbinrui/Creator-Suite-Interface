@@ -360,7 +360,14 @@ export function Dashboard(props) {
                                 </Suspense>
                             }
                         />
-                        <Route path="create/" element={<Create />} />
+                        <Route
+                            path="create/"
+                            element={
+                                <Suspense fallback={<Spinner />}>
+                                    <Create />
+                                </Suspense>
+                            }
+                        />
                         <Route
                             path="owned/"
                             element={

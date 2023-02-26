@@ -153,10 +153,14 @@ export function Create() {
                                         </div>
                                     </div>
                                     {paymentToken ? (
-                                        <p className="mt-2 text-sm text-gray-500">
-                                            Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
-                                            {paymentToken.symbol}
-                                        </p>
+                                        isValidating ? (
+                                            <p className="mt-2 text-sm text-gray-500">Loading balance...</p>
+                                        ) : (
+                                            <p className="mt-2 text-sm text-gray-500">
+                                                Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
+                                                {paymentToken.symbol}
+                                            </p>
+                                        )
                                     ) : null}
                                 </div>
 
