@@ -1,6 +1,7 @@
 import useSWRMutation from 'swr/mutation'
 import { getCreation, purchaseCreation } from '../database'
-import { connectIfNeeded, getAssetId, purchaseAsset } from '../connections'
+import { balanceOf, connectIfNeeded, isQualified, purchaseAsset } from '../connections'
+import { isGreaterThanOrEqualTo } from '../helpers/isGreaterThanOrEqualTo'
 
 /**
  * Use to purchase a creation
@@ -15,7 +16,14 @@ export function usePurchaseCreation(creationId, buyer) {
             await connectIfNeeded()
 
             const creation = await getCreation(creationId)
-            const assetId = await getAssetId(creation.ownerAddress)
+            const { assetId, paymentTokenAddress, paymentTokenAmount } = creation
+
+            const balance = await balanceOf(paymentTokenAddress, buyer)
+            if (!isGreaterThanOrEqualTo(balance, paymentTokenAmount)) throw new Error('Insufficient balance.')
+
+            const qualified = await isQualified(buyer, assetId)
+            if (qualified) throw new Error('Already purchased.')
+
             return purchaseCreation(creationId, buyer, await purchaseAsset(assetId))
         },
         {
