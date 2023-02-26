@@ -7,8 +7,8 @@ import { useAccount, useBalance, useConnect, useDisconnect, useEnsAvatar, useEns
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { useBlockie } from '../../hooks/useBlockie'
-import { Create } from './Create.jsx'
-import { Services } from './Services.jsx'
+import { Create } from './Create'
+import { Services } from './Services'
 
 const navigation = [
     { name: 'Services', route: '/core-service', icon: TableCellsIcon },
@@ -91,7 +91,7 @@ export function CoreService() {
                                     <nav className="px-2">
                                         <div className="space-y-1">
                                             {navigation.map((item) => {
-                                                const match = matchPath(location.pathname, item.route)
+                                                const match = matchPath(item.route, location.pathname)
                                                 return (
                                                     <Link
                                                         key={item.name}
@@ -250,7 +250,7 @@ export function CoreService() {
                     </div>
                     {/* Navigation */}
                     <nav className="mt-6 px-3">
-                        <div className="space-y-1">
+                        <div className="space-y-1" data-path={location.pathname}>
                             {navigation.map((item) => {
                                 const match = matchPath(item.route, location.pathname)
                                 return (
@@ -311,7 +311,7 @@ export function CoreService() {
                     </div>
                     <Routes>
                         <Route path="/" element={<Services />} />
-                        <Route path="/create/" element={<Create />} />
+                        <Route path="/create/*" element={<Create />} />
                         <Route path="/services/" element={<Services />} />
                         <Route path="/*" element={<Navigate to="/creation" />} />
                     </Routes>

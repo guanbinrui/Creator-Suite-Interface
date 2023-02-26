@@ -18,7 +18,7 @@ export const Services = ({ className, ...rest }) => {
         const list = data?.Services ?? []
         if (!keyword) return list
         return list.filter((x) => x.Name.includes(keyword))
-    }, [keyword, data?.services])
+    }, [keyword, data?.Services])
 
     return (
         <div className={classnames('py-6', className)} {...rest}>
