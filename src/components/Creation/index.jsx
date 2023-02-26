@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { PurchasedNotification } from '../PurchasedNotification'
+import { Avatar } from '../Avatar'
 import { Previewer } from '../Previewer'
 import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
-import { useBlockie } from '../../hooks/useBlockie'
 import { useCreation } from '../../hooks/useCreation'
 import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
 
@@ -23,9 +23,6 @@ export function Creation() {
 
     const { address } = useAccount()
 
-    const ownerBlockie = useBlockie(data?.ownerAddress)
-    const { data: ensName } = useEnsName({ address: data?.ownerAddress })
-    const { data: ensAvatar } = useEnsAvatar({ address: data?.ownerAddress })
     const owned = isSameAddress(data?.ownerAddress, address)
     const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
 
@@ -60,18 +57,13 @@ export function Creation() {
                                     </h1>
 
                                     <h2 id="information-heading" className="sr-only">
-                                        Product information
+                                        Creator information
                                     </h2>
                                     <p className="mt-2 text-sm text-gray-500 inline-flex items-center">
                                         {owned ? (
                                             <span className="mr-1">You</span>
                                         ) : (
-                                            <img
-                                                className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 mr-1"
-                                                src={ensAvatar || ownerBlockie}
-                                                title={ensName || data.ownerAddress}
-                                                alt={ensName || data.ownerAddress}
-                                            />
+                                            <Avatar address={data?.ownerAddress} />
                                         )}
                                         <span className="mr-1">created at</span>
                                         <time dateTime={data.createdAt}>

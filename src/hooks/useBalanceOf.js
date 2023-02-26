@@ -10,6 +10,6 @@ export function useBalanceOf(address, owner) {
             const balance = await balanceOf(address, owner)
             return balance.toString()
         },
-        { suspense: true, revalidateOnFocus: false, revalidateOnMount: true },
+        { suspense: false, revalidateOnFocus: false, revalidateOnMount: true },
     )
 }
