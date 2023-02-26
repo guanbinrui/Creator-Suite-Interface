@@ -1,29 +1,36 @@
 import { useMemo, useState } from 'react'
-import { DocumentPlusIcon } from '@heroicons/react/24/outline'
 import { useAccount } from 'wagmi'
+import { DocumentPlusIcon } from '@heroicons/react/24/outline'
+import TokenList from '../../constants/TokenList.json'
 import { CreatedNotification } from '../CreatedNotification'
+import { useBalanceOf } from '../../hooks/useBalanceOf'
 import { useCreateCreation } from '../../hooks/useCreateCreation'
 import { isZero } from '../../helpers/isZero'
+import { formatBalance } from '../../helpers/formatBalance'
 import { isValidAddress } from '../../helpers/isValidAddress'
+import { TokenListMenu } from '../TokenListMenu'
+
+const defaultPaymentToken = TokenList['Mumbai'][0]
 
 export function Create() {
     const [success, setSuccess] = useState(false)
     const [showCreatedNotification, setShowCreatedNotification] = useState(false)
 
-    const { address } = useAccount()
-
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [paymentTokenAddress, setPaymentTokenAddress] = useState('0x66b57885E8E9D84742faBda0cE6E3496055b012d')
+    const [paymentToken, setPaymentToken] = useState(defaultPaymentToken)
     const [paymentTokenAmount, setPaymentTokenAmount] = useState('')
     const [attachments, setAttachments] = useState([])
+
+    const { address } = useAccount()
+    const { data: balance, isValidating } = useBalanceOf(paymentToken.address, address)
 
     const [submitted, setSubmitted] = useState(false)
 
     const validationMessage = useMemo(() => {
         if (!name) return 'Please enter creation name.'
-        if (!paymentTokenAddress) return 'Please select the price token.'
-        if (!isValidAddress(paymentTokenAddress)) return 'Please select a valid price token.'
+        if (!paymentToken.address) return 'Please select the price token.'
+        if (!isValidAddress(paymentToken.address)) return 'Please select a valid price token.'
         if (isZero(paymentTokenAmount)) return 'Please enter price.'
         if (!attachments.length) return 'Please upload your creation.'
         const attachment = attachments[0]
@@ -36,18 +43,18 @@ export function Create() {
         )
             return 'The given attachment not supported.'
         return ''
-    }, [name, description, paymentTokenAddress, paymentTokenAmount, attachments])
+    }, [name, description, paymentToken, paymentTokenAmount, attachments])
 
     const creation = useMemo(() => {
         return {
             name,
             description,
             ownerAddress: address,
-            paymentTokenAddress,
+            paymentTokenAddress: paymentToken.address,
             paymentTokenAmount,
             attachments,
         }
-    }, [address, name, description, paymentTokenAddress, paymentTokenAmount, attachments])
+    }, [address, name, description, paymentToken, paymentTokenAmount, attachments])
 
     const { trigger, isMutating } = useCreateCreation(creation)
 
@@ -125,21 +132,32 @@ export function Create() {
                                     </label>
                                     <div className="mt-1 sm:col-span-2">
                                         <div className="flex max-w-lg rounded-md">
-                                            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
-                                                DAI
-                                            </span>
+                                            <div className="block rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                                                <TokenListMenu
+                                                    selectedTokenAddress={paymentToken.address}
+                                                    onChange={(token) => {
+                                                        setPaymentToken(token)
+                                                    }}
+                                                />
+                                            </div>
                                             <input
                                                 type="number"
                                                 name="price"
                                                 id="price"
                                                 autoComplete="price"
                                                 placeholder="Amount"
-                                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm focus:z-10"
                                                 value={paymentTokenAmount}
                                                 onChange={(event) => setPaymentTokenAmount(event.target.value)}
                                             />
                                         </div>
                                     </div>
+                                    {paymentToken ? (
+                                        <p className="mt-2 text-sm text-gray-500">
+                                            Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
+                                            {paymentToken.symbol}
+                                        </p>
+                                    ) : null}
                                 </div>
 
                                 <div className="sm:col-span-6">
@@ -219,7 +237,7 @@ export function Create() {
                                             // reset
                                             setName('')
                                             setDescription('')
-                                            setPaymentTokenAddress('')
+                                            setPaymentToken(defaultPaymentToken)
                                             setPaymentTokenAmount('')
                                             setAttachments([])
                                             setSubmitted(false)

@@ -1,8 +1,7 @@
 import { prepareWriteContract, readContract, writeContract } from '@wagmi/core'
 import { polygonMumbai } from '@wagmi/core/chains'
-import { isValidAddress } from '../helpers/isValidAddress'
-import ERC20ABI from '../abis/ERC20.json'
 import ContractSubscriptionABI from '../abis/ContentSubscription.json'
+import { isValidAddress } from '../helpers/isValidAddress'
 import CONTENT_SUBSCRIPTION from '../constants/ContentSubscription.json'
 
 function getSubscriptionContractAddress() {
@@ -42,21 +41,6 @@ export function isQualified(owner, assetId) {
         abi: ContractSubscriptionABI,
         functionName: 'isQualified',
         args: [owner, assetId],
-    })
-}
-
-/**
- * Return the balance of the owner on the ERC20 contract
- */
-export function balanceOf(address, owner) {
-    if (!isValidAddress(address)) throw new Error('Not a valid contract address.')
-    if (!isValidAddress(owner)) throw new Error('Not a valid owner address.')
-    return readContract({
-        chainId: polygonMumbai.chainId,
-        address,
-        abi: ERC20ABI,
-        functionName: 'balanceOf',
-        args: [owner],
     })
 }
 
