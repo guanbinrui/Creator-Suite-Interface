@@ -5,6 +5,14 @@
         {
             "chainId": 80001,
             "decimals": 18,
+            "symbol": "TST",
+            "name": "Test Token",
+            "address": "0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e",
+            "logoURI": "https://mumbai.polygonscan.com/images/main/empty-token.png"
+        },
+        {
+            "chainId": 80001,
+            "decimals": 6,
             "symbol": "USDC",
             "name": "USDC",
             "address": "0xBD2094e633296909DDc7954Cf2f29e2f508112a2",
