@@ -17,6 +17,7 @@ import { isSameAddress } from '../../helpers/isSameAddress'
 import { formatKeccakHash } from '../../helpers/formatKeccakHash'
 import { resolveTransactionHashLink } from '../../helpers/resolveTransactionHashLink'
 import { isGreaterThanOrEqualTo } from '../../helpers/isGreaterThanOrEqualTo'
+import { isValidAddress } from '../../helpers/isValidAddress'
 
 export function Creation() {
     const [success, setSuccess] = useState(false)
@@ -38,9 +39,10 @@ export function Creation() {
     const { trigger, isMutating } = usePurchaseCreation(creationId, address)
 
     const validationMessage = useMemo(() => {
+        if (!isValidAddress(address)) return ''
         if (!isGreaterThanOrEqualTo(balance, creation.paymentTokenAmount)) return 'Insufficient Balance'
         return ''
-    }, [balance, creation])
+    }, [address, balance, creation])
 
     if (isValidatingCreation) return <Spinner />
     if (!creation) return null
@@ -184,10 +186,14 @@ export function Creation() {
                                         {paymentToken ? (
                                             isValidatingBalance ? (
                                                 <p className="mt-2 text-sm text-gray-500">Loading balance...</p>
-                                            ) : (
+                                            ) : isValidAddress(address) ? (
                                                 <p className="mt-2 text-sm text-gray-500">
                                                     Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
                                                     {paymentToken.symbol}
+                                                </p>
+                                            ) : (
+                                                <p className="mt-2 text-sm text-gray-500">
+                                                    Please connect a wallet to purchase this creation.
                                                 </p>
                                             )
                                         ) : null}
