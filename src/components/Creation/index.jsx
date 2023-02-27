@@ -28,7 +28,7 @@ export function Creation() {
     const { address } = useAccount()
 
     const owned = isSameAddress(data?.ownerAddress, address)
-    const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
+    const bought = (data?.buyers ?? []).find((x) => isSameAddress(x.address, address))
 
     const { trigger, isMutating } = usePurchaseCreation(creationId, address)
 
@@ -89,7 +89,20 @@ export function Creation() {
 
                                 {bought ? (
                                     <div>
-                                        <p className="text-green-500">You have bought this creation.</p>
+                                        <p className="text-green-500">
+                                            You have bought this creation at{' '}
+                                            <a
+                                                href={resolveTransactionHashLink(
+                                                    polygonMumbai.id,
+                                                    bought.transactionHash,
+                                                )}
+                                                rel="noreferrer"
+                                                target="_blank"
+                                            >
+                                                {formatKeccakHash(bought.transactionHash, 4)}
+                                            </a>
+                                            .
+                                        </p>
                                     </div>
                                 ) : data.buyers.length > 0 ? (
                                     <div>

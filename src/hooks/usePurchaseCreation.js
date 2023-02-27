@@ -5,6 +5,8 @@ import { isGreaterThanOrEqualTo } from '../helpers/isGreaterThanOrEqualTo'
 import { getSubscriptionContractAddress } from '../helpers/getSubscriptionContractAddress'
 import { isZero } from '../helpers/isZero'
 
+const MAX_UINT256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+
 /**
  * Use to purchase a creation
  * @param {string} creationId
@@ -29,7 +31,7 @@ export function usePurchaseCreation(creationId, buyer) {
             const subscriptionContractAddress = getSubscriptionContractAddress()
             const amount = await allowance(paymentTokenAddress, buyer, subscriptionContractAddress)
             if (!isGreaterThanOrEqualTo(amount, paymentTokenAmount)) {
-                await approve(paymentTokenAddress, subscriptionContractAddress, paymentTokenAmount)
+                await approve(paymentTokenAddress, subscriptionContractAddress, MAX_UINT256)
             }
 
             const qualified = await isQualified(buyer, assetId)
