@@ -1,12 +1,12 @@
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, Transition } from '@headlessui/react'
-import TokenList from '../../constants/TokenList.json'
+import TOKEN_LIST from '../../constants/TokenList.json'
 import { classNames } from '../../helpers/classNames'
 import { isSameAddress } from '../../helpers/isSameAddress'
 
 export function TokenListMenu(props) {
-    const tokens = TokenList['Mumbai']
+    const tokens = TOKEN_LIST['Mumbai']
     const selectedToken = tokens.find((x) => isSameAddress(x.address, props.selectedTokenAddress)) ?? tokens[0]
 
     const onSelect = (token) => {
@@ -46,7 +46,7 @@ export function TokenListMenu(props) {
                                             )}
                                         >
                                             <div className="flex items-center">
-                                                <img className="w-5 h-5 mr-2" src={x.logoURI} />
+                                                <img className="w-5 h-5 mr-2" src={x.logoURI} alt={x.symbol} />
                                                 <span>{x.name}</span>
                                             </div>
                                         </Link>
