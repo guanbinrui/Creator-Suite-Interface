@@ -117,7 +117,7 @@ export function Creation() {
                                     </div>
                                 ) : creation.buyers.length > 0 ? (
                                     <div>
-                                        <p className="text-gray-500">{`${creation.buyers.length} people purchased it.`}</p>
+                                        <p className="text-gray-500">{`${creation.buyers.length} people purchased this creation.`}</p>
                                     </div>
                                 ) : null}
                             </div>
