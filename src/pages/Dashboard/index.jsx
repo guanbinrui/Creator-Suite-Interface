@@ -15,11 +15,11 @@ import { connect, disconnect, switchNetwork } from '../../connections'
 import { Account } from '../../components/Account'
 import { classNames } from '../../helpers/classNames'
 import { CreateSuiteLogo } from '../../components/Logo'
+import { NavigationIcon } from '../../components/NavigationIcon'
 
 const navigation = [
-    { name: 'Market', to: '/creation', icon: BuildingStorefrontIcon },
-    { name: 'Owned', to: '/creation/owned', icon: SparklesIcon },
-    { name: 'Purchased', to: '/creation/purchased', icon: ShoppingBagIcon },
+    { name: 'Creations', to: '/creation', icon: NavigationIcon },
+    { name: 'List', to: '/creation/create', icon: SparklesIcon },
 ]
 
 function getCurrentNavigation() {
