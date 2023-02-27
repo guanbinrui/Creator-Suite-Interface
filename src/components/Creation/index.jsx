@@ -8,6 +8,7 @@ import { Avatar } from '../Avatar'
 import { Previewer } from '../Previewer'
 import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
+import TOKEN_LIST from '../../constants/TokenList.json'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
 import { useCreation } from '../../hooks/useCreation'
@@ -27,9 +28,11 @@ export function Creation() {
     const { address } = useAccount()
 
     const owned = isSameAddress(data?.ownerAddress, address)
-    const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
+    const bought = (data?.buyers ?? []).find((x) => isSameAddress(x.address, address))
 
     const { trigger, isMutating } = usePurchaseCreation(creationId, address)
+
+    const paymentToken = TOKEN_LIST['Mumbai'].find((x) => isSameAddress(x.address, data?.paymentTokenAddress))
 
     if (isValidating) return <Spinner />
     if (!data) return null
@@ -75,16 +78,31 @@ export function Creation() {
                                         <span className="mr-1">with txn</span>
                                         <a
                                             href={resolveTransactionHashLink(polygonMumbai.id, data.transactionHash)}
+                                            rel="noreferrer"
                                             target="_blank"
                                         >
                                             {formatKeccakHash(data.transactionHash, 4)}
                                         </a>
+                                        <span>.</span>
                                     </p>
                                 </div>
 
                                 {bought ? (
                                     <div>
-                                        <p className="text-green-500">You have bought this creation.</p>
+                                        <p className="text-green-500">
+                                            You have bought this creation at{' '}
+                                            <a
+                                                href={resolveTransactionHashLink(
+                                                    polygonMumbai.id,
+                                                    bought.transactionHash,
+                                                )}
+                                                rel="noreferrer"
+                                                target="_blank"
+                                            >
+                                                {formatKeccakHash(bought.transactionHash, 4)}
+                                            </a>
+                                            .
+                                        </p>
                                     </div>
                                 ) : data.buyers.length > 0 ? (
                                     <div>
@@ -129,10 +147,10 @@ export function Creation() {
                                         {isMutating
                                             ? 'Paying...'
                                             : `Pay ${formatBalance(
-                                                  data.paymentTokenAmount * 10,
-                                                  1,
+                                                  data.paymentTokenAmount,
+                                                  paymentToken.decimals,
                                                   2,
-                                              )} DAI for full-access`}
+                                              )} ${paymentToken.symbol} for full-access`}
                                     </button>
                                 )}
                             </div>

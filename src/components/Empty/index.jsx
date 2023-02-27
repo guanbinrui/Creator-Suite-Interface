@@ -13,7 +13,7 @@ export function Empty() {
                     <p className="mt-1 text-sm text-gray-500">
                         {isConnected
                             ? 'Get started by listing your creations.'
-                            : 'Please connect a wallet to list your works.'}
+                            : 'Please connect a wallet to list your creations.'}
                     </p>
                     {isConnected ? (
                         <div className="mt-6">
