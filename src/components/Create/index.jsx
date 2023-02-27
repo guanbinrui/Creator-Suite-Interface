@@ -3,10 +3,8 @@ import { useAccount } from 'wagmi'
 import { DocumentPlusIcon } from '@heroicons/react/24/outline'
 import TokenList from '../../constants/TokenList.json'
 import { CreatedNotification } from '../CreatedNotification'
-import { useBalanceOf } from '../../hooks/useBalanceOf'
 import { useCreateCreation } from '../../hooks/useCreateCreation'
 import { isZero } from '../../helpers/isZero'
-import { formatBalance } from '../../helpers/formatBalance'
 import { isValidAddress } from '../../helpers/isValidAddress'
 import { TokenListMenu } from '../TokenListMenu'
 import { scale10 } from '../../helpers/scale10'
@@ -24,7 +22,6 @@ export function Create() {
     const [attachments, setAttachments] = useState([])
 
     const { address } = useAccount()
-    const { data: balance, isValidating } = useBalanceOf(paymentToken.address, address)
 
     const [submitted, setSubmitted] = useState(false)
 
@@ -154,16 +151,6 @@ export function Create() {
                                             />
                                         </div>
                                     </div>
-                                    {paymentToken ? (
-                                        isValidating ? (
-                                            <p className="mt-2 text-sm text-gray-500">Loading balance...</p>
-                                        ) : (
-                                            <p className="mt-2 text-sm text-gray-500">
-                                                Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
-                                                {paymentToken.symbol}
-                                            </p>
-                                        )
-                                    ) : null}
                                 </div>
 
                                 <div className="sm:col-span-6">

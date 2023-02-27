@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { useAccount } from 'wagmi'
@@ -9,12 +9,14 @@ import { Previewer } from '../Previewer'
 import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
 import TOKEN_LIST from '../../constants/TokenList.json'
+import { useCreation } from '../../hooks/useCreation'
+import { useBalanceOf } from '../../hooks/useBalanceOf'
+import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
-import { useCreation } from '../../hooks/useCreation'
-import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
 import { formatKeccakHash } from '../../helpers/formatKeccakHash'
 import { resolveTransactionHashLink } from '../../helpers/resolveTransactionHashLink'
+import { isGreaterThanOrEqualTo } from '../../helpers/isGreaterThanOrEqualTo'
 
 export function Creation() {
     const [success, setSuccess] = useState(false)
@@ -23,19 +25,25 @@ export function Creation() {
     const [openPreviewer, setOpenPreviewer] = useState(false)
 
     const { creationId } = useParams()
-    const { data, isValidating, mutate } = useCreation(creationId)
+    const { data: creation, isValidating: isValidatingCreation, mutate } = useCreation(creationId)
+
+    const paymentToken = TOKEN_LIST['Mumbai'].find((x) => isSameAddress(x.address, creation?.paymentTokenAddress))
 
     const { address } = useAccount()
+    const { data: balance, isValidating: isValidatingBalance } = useBalanceOf(paymentToken.address, address)
 
-    const owned = isSameAddress(data?.ownerAddress, address)
-    const bought = (data?.buyers ?? []).find((x) => isSameAddress(x.address, address))
+    const owned = isSameAddress(creation?.ownerAddress, address)
+    const bought = (creation?.buyers ?? []).find((x) => isSameAddress(x.address, address))
 
     const { trigger, isMutating } = usePurchaseCreation(creationId, address)
 
-    const paymentToken = TOKEN_LIST['Mumbai'].find((x) => isSameAddress(x.address, data?.paymentTokenAddress))
+    const validationMessage = useMemo(() => {
+        if (!isGreaterThanOrEqualTo(balance, creation.paymentTokenAmount)) return 'Insufficient Balance'
+        return ''
+    }, [balance, creation])
 
-    if (isValidating) return <Spinner />
-    if (!data) return null
+    if (isValidatingCreation) return <Spinner />
+    if (!creation) return null
 
     return (
         <>
@@ -45,8 +53,8 @@ export function Creation() {
                 setShow={setShowPruchasedNotification}
             />
             <Previewer
-                title={data.name}
-                attachment={data.attachments[0]}
+                title={creation.name}
+                attachment={creation.attachments[0]}
                 open={openPreviewer}
                 setOpen={setOpenPreviewer}
             />
@@ -59,7 +67,7 @@ export function Creation() {
                             <div className="flex flex-col-reverse">
                                 <div className="mt-4">
                                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                                        {data.name}
+                                        {creation.name}
                                     </h1>
 
                                     <h2 id="information-heading" className="sr-only">
@@ -69,19 +77,22 @@ export function Creation() {
                                         {owned ? (
                                             <span className="mr-1">You</span>
                                         ) : (
-                                            <Avatar address={data.ownerAddress} />
+                                            <Avatar address={creation.ownerAddress} />
                                         )}
                                         <span className="mr-1">created at</span>
-                                        <time className="mr-1" dateTime={data.createdAt}>
-                                            {format(data.createdAt, 'dd MMM, yyyy hh:mm a')}
+                                        <time className="mr-1" dateTime={creation.createdAt}>
+                                            {format(creation.createdAt, 'dd MMM, yyyy hh:mm a')}
                                         </time>
                                         <span className="mr-1">with txn</span>
                                         <a
-                                            href={resolveTransactionHashLink(polygonMumbai.id, data.transactionHash)}
+                                            href={resolveTransactionHashLink(
+                                                polygonMumbai.id,
+                                                creation.transactionHash,
+                                            )}
                                             rel="noreferrer"
                                             target="_blank"
                                         >
-                                            {formatKeccakHash(data.transactionHash, 4)}
+                                            {formatKeccakHash(creation.transactionHash, 4)}
                                         </a>
                                         <span>.</span>
                                     </p>
@@ -104,15 +115,15 @@ export function Creation() {
                                             .
                                         </p>
                                     </div>
-                                ) : data.buyers.length > 0 ? (
+                                ) : creation.buyers.length > 0 ? (
                                     <div>
-                                        <p className="text-gray-500">{`${data.buyers.length} people purchased it.`}</p>
+                                        <p className="text-gray-500">{`${creation.buyers.length} people purchased it.`}</p>
                                     </div>
                                 ) : null}
                             </div>
 
                             <div className="mt-6 text-gray-500">
-                                <Markdown>{data.description}</Markdown>
+                                <Markdown>{creation.description}</Markdown>
                             </div>
 
                             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-1">
@@ -125,33 +136,54 @@ export function Creation() {
                                         Preview
                                     </button>
                                 ) : (
-                                    <button
-                                        type="button"
-                                        className="flex w-1/2 max-w-sm items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                                        disabled={isMutating}
-                                        onClick={async () => {
-                                            try {
-                                                await trigger()
-                                                await mutate()
-                                                setSuccess(true)
-                                            } catch {
-                                                setSuccess(false)
-
-                                                // reset
-                                                setShowPruchasedNotification(false)
-                                            } finally {
-                                                setShowPruchasedNotification(true)
+                                    <>
+                                        <button
+                                            type="button"
+                                            className="flex w-1/2 max-w-sm items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                            disabled={
+                                                isMutating ||
+                                                isValidatingBalance ||
+                                                isValidatingCreation ||
+                                                validationMessage
                                             }
-                                        }}
-                                    >
-                                        {isMutating
-                                            ? 'Paying...'
-                                            : `Pay ${formatBalance(
-                                                  data.paymentTokenAmount,
-                                                  paymentToken.decimals,
-                                                  2,
-                                              )} ${paymentToken.symbol} for full-access`}
-                                    </button>
+                                            onClick={async () => {
+                                                try {
+                                                    await trigger()
+                                                    await mutate()
+                                                    setSuccess(true)
+                                                } catch {
+                                                    setSuccess(false)
+
+                                                    // reset
+                                                    setShowPruchasedNotification(false)
+                                                } finally {
+                                                    setShowPruchasedNotification(true)
+                                                }
+                                            }}
+                                        >
+                                            {isValidatingCreation || isValidatingBalance
+                                                ? 'Loading...'
+                                                : validationMessage
+                                                ? validationMessage
+                                                : isMutating
+                                                ? 'Paying...'
+                                                : `Pay ${formatBalance(
+                                                      creation.paymentTokenAmount,
+                                                      paymentToken.decimals,
+                                                      2,
+                                                  )} ${paymentToken.symbol} for full-access`}
+                                        </button>
+                                        {paymentToken ? (
+                                            isValidatingBalance ? (
+                                                <p className="mt-2 text-sm text-gray-500">Loading balance...</p>
+                                            ) : (
+                                                <p className="mt-2 text-sm text-gray-500">
+                                                    Balance: {formatBalance(balance, paymentToken.decimals, 2)}{' '}
+                                                    {paymentToken.symbol}
+                                                </p>
+                                            )
+                                        ) : null}
+                                    </>
                                 )}
                             </div>
 
