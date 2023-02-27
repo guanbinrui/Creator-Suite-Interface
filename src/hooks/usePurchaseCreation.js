@@ -3,6 +3,7 @@ import { getCreation, purchaseCreation } from '../database'
 import { allowance, approve, balanceOf, connectIfNeeded, getAssetId, isQualified, purchaseAsset } from '../connections'
 import { isGreaterThanOrEqualTo } from '../helpers/isGreaterThanOrEqualTo'
 import { getSubscriptionContractAddress } from '../helpers/getSubscriptionContractAddress'
+import { isZero } from '../helpers/isZero'
 
 /**
  * Use to purchase a creation
@@ -19,15 +20,18 @@ export function usePurchaseCreation(creationId, buyer) {
             const creation = await getCreation(creationId)
             const { paymentTokenAddress, paymentTokenAmount } = creation
 
+            const assetId = await getAssetId(creation.ownerAddress, creationId)
+            if (isZero(assetId)) throw new Error('Cannot find asset.')
+
             const balance = await balanceOf(paymentTokenAddress, buyer)
             if (!isGreaterThanOrEqualTo(balance, paymentTokenAmount)) throw new Error('Insufficient balance.')
 
-            const amount = await allowance(paymentTokenAddress, buyer)
+            const subscriptionContractAddress = getSubscriptionContractAddress()
+            const amount = await allowance(paymentTokenAddress, buyer, subscriptionContractAddress)
             if (!isGreaterThanOrEqualTo(amount, paymentTokenAmount)) {
-                await approve(paymentTokenAddress, getSubscriptionContractAddress(), paymentTokenAmount)
+                await approve(paymentTokenAddress, subscriptionContractAddress, paymentTokenAmount)
             }
 
-            const assetId = await getAssetId(creation.ownerAddress, creationId)
             const qualified = await isQualified(buyer, assetId)
             if (qualified) throw new Error('Already purchased.')
 

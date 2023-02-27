@@ -31,14 +31,17 @@ export async function allowance(address, owner, spender) {
     if (!isValidAddress(owner)) throw new Error('Not a valid owner address.')
     if (!isValidAddress(spender)) throw new Error('Not a valid spender address.')
 
-    const allowance = await readContract({
+    const amount = await readContract({
         chainId: polygonMumbai.id,
         address,
         abi: ERC20ABI,
         functionName: 'allowance',
         args: [owner, spender],
+        overrides: {
+            from: owner,
+        },
     })
-    return allowance.toString()
+    return amount.toString()
 }
 
 /**
