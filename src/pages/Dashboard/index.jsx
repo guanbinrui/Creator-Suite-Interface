@@ -1,5 +1,5 @@
-import { Fragment, Suspense, useEffect, useState } from 'react'
-import { Route, Routes, Navigate, Link, useLocation } from 'react-router-dom'
+import { Fragment, Suspense, useState } from 'react'
+import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Menu, Transition } from '@headlessui/react'
@@ -13,38 +13,30 @@ import { AllPurchasedCreations } from '../../components/Creations/AllPurchasedCr
 import { AllOwnedCreations } from '../../components/Creations/AllOwnedCreations'
 import { connect, disconnect, switchNetwork } from '../../connections'
 import { Account } from '../../components/Account'
+import { classNames } from '../../helpers/classNames'
 
 const navigation = [
-    { name: 'Market', href: '#/creation', icon: BuildingStorefrontIcon },
-    { name: 'Owned', href: '#/creation/owned', icon: SparklesIcon },
-    { name: 'Purchased', href: '#/creation/purchased', icon: ShoppingBagIcon },
+    { name: 'Market', to: '/creation', icon: BuildingStorefrontIcon },
+    { name: 'Owned', to: '/creation/owned', icon: SparklesIcon },
+    { name: 'Purchased', to: '/creation/purchased', icon: ShoppingBagIcon },
 ]
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
-
 function getCurrentNavigation() {
-    const item = navigation.find((x) => x.href === window.location.hash) ?? navigation[0]
-    return item.name
+    return navigation.find((x) => x.to === window.location.pathname) ?? navigation[0]
 }
 
 export function Dashboard(props) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
-    // #region navigation
-    const [currentNavigation, setCurrentNavigation] = useState(getCurrentNavigation())
-
-    const location = useLocation()
-    useEffect(() => {
-        setCurrentNavigation(getCurrentNavigation())
-    }, [location])
-    // #endregion
-
     // #region connection
     const { address, isConnected } = useAccount()
     const { chain } = useNetwork()
     // #endregion
+
+    const [currentNavigation, setCurrentNavigation] = useState(getCurrentNavigation())
+
+    console.log('DEBUG: current navigation')
+    console.log(currentNavigation)
 
     return (
         <div className="min-h-full">
@@ -108,15 +100,13 @@ export function Dashboard(props) {
                                                     key={item.name}
                                                     href={item.href}
                                                     className={classNames(
-                                                        currentNavigation === item.name
+                                                        currentNavigation.name === item.name
                                                             ? 'bg-gray-100 text-gray-900'
                                                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
                                                         'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md',
                                                     )}
                                                     aria-current={item.current ? 'page' : undefined}
-                                                    onClick={() => {
-                                                        currentNavigation(item.name)
-                                                    }}
+                                                    onClick={() => setCurrentNavigation(item)}
                                                 >
                                                     <item.icon
                                                         className={classNames(
@@ -168,58 +158,37 @@ export function Dashboard(props) {
                         >
                             <Menu.Items className="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                 <div className="py-1">
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#/creation/create"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
+                                    {navigation.map((x) => {
+                                        return (
+                                            <Menu.Item key={x.name}>
+                                                {({ active }) => (
+                                                    <Link
+                                                        to={x.to}
+                                                        className={classNames(
+                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                            'block px-4 py-2 text-sm',
+                                                        )}
+                                                        onClick={() => setCurrentNavigation(x)}
+                                                    >
+                                                        {x.name}
+                                                    </Link>
                                                 )}
-                                            >
-                                                Create
-                                            </a>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#/creation/owned"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Owned
-                                            </a>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <a
-                                                href="#/creation/purchased"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Purchased
-                                            </a>
-                                        )}
-                                    </Menu.Item>
+                                            </Menu.Item>
+                                        )
+                                    })}
                                 </div>
                                 <div className="py-1">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <a
-                                                href="#"
+                                            <Link
+                                                to="/creation"
                                                 className={classNames(
                                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                     'block px-4 py-2 text-sm',
                                                 )}
                                             >
                                                 Support
-                                            </a>
+                                            </Link>
                                         )}
                                     </Menu.Item>
                                 </div>
@@ -251,17 +220,17 @@ export function Dashboard(props) {
                     <nav className="mt-6 px-3">
                         <div className="space-y-1">
                             {navigation.map((item) => (
-                                <a
+                                <Link
                                     key={item.name}
-                                    href={item.href}
+                                    to={item.to}
                                     className={classNames(
-                                        currentNavigation === item.name
+                                        currentNavigation.name === item.name
                                             ? 'bg-gray-200 text-gray-900'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
                                         'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
                                     )}
                                     aria-current={item.current ? 'page' : undefined}
-                                    onClick={() => setCurrentNavigation(item.name)}
+                                    onClick={() => setCurrentNavigation(item)}
                                 >
                                     <item.icon
                                         className={classNames(
@@ -271,7 +240,7 @@ export function Dashboard(props) {
                                         aria-hidden="true"
                                     />
                                     {item.name}
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </nav>
@@ -288,7 +257,7 @@ export function Dashboard(props) {
                                 className="flex items-center justify-center border border-gray-300 rounded-md transition hover:bg-zinc-900/5 px-1 py-1"
                                 aria-label="List a creation"
                             >
-                                <Link to="/creation/create">
+                                <Link to="create">
                                     <PlusIcon className="h-6 w-6 stroke-zinc-500 hover:stroke-zinc-900 " />
                                 </Link>
                             </button>
