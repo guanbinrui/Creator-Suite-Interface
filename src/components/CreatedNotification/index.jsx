@@ -48,17 +48,11 @@ export function CreatedNotification(props) {
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
                                         <p className="text-sm font-medium text-gray-900">
-                                            {success ? 'Successfully Created!' : 'Create Failed'}
+                                            {success ? 'Successfully Listed!' : 'List Failed'}
                                         </p>
                                         {success ? (
                                             <p className="mt-1 text-sm text-gray-500">
-                                                You can view it in{' '}
-                                                <Link to="/creation/owned">
-                                                    <span className="font-medium text-blue-600 hover:text-blue-500">
-                                                        Owned
-                                                    </span>
-                                                </Link>
-                                                .
+                                                Well done! Your creation is listed now.
                                             </p>
                                         ) : (
                                             <p className="mt-1 text-sm text-gray-500">Please try again later.</p>

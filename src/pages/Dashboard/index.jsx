@@ -3,7 +3,7 @@ import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Transition } from '@headlessui/react'
-import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, PlusIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Create } from '../../components/Create'
 import { Creation } from '../../components/Creation'
@@ -15,11 +15,11 @@ import { connect, disconnect, switchNetwork } from '../../connections'
 import { Account } from '../../components/Account'
 import { classNames } from '../../helpers/classNames'
 import { CreateSuiteLogo } from '../../components/Logo'
+import { NavigationIcon } from '../../components/NavigationIcon'
 
 const navigation = [
-    { name: 'Market', to: '/creation', icon: BuildingStorefrontIcon },
-    { name: 'Owned', to: '/creation/owned', icon: SparklesIcon },
-    { name: 'Purchased', to: '/creation/purchased', icon: ShoppingBagIcon },
+    { name: 'Creations', to: '/creation', icon: NavigationIcon },
+    { name: 'List Creation', to: '/creation/create', icon: PlusCircleIcon },
 ]
 
 function getCurrentNavigation() {
