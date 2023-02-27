@@ -28,12 +28,15 @@ export function Creation(props) {
                                 addSuffix: true,
                             })}
                         </p>
-                        <p className="text-sm text-gray-900">
-                            <span className="mr-1 text-gray-500">Price:</span>
-                            <span className="font-medium">
-                                {formatBalance(props.paymentTokenAmount, paymentToken.decimals)} {paymentToken.symbol}
-                            </span>
-                        </p>
+                        {paymentToken ? (
+                            <p className="text-sm text-gray-900">
+                                <span className="mr-1 text-gray-500">Price:</span>
+                                <span className="font-medium">
+                                    {formatBalance(props.paymentTokenAmount, paymentToken.decimals)}{' '}
+                                    {paymentToken.symbol}
+                                </span>
+                            </p>
+                        ) : null}
                     </div>
                 </div>
             </div>
