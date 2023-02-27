@@ -2,7 +2,7 @@ import { Fragment, Suspense, useState } from 'react'
 import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
-import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Create } from '../../components/Create'
@@ -14,6 +14,7 @@ import { AllOwnedCreations } from '../../components/Creations/AllOwnedCreations'
 import { connect, disconnect, switchNetwork } from '../../connections'
 import { Account } from '../../components/Account'
 import { classNames } from '../../helpers/classNames'
+import { CreateSuiteLogo } from '../../components/Logo'
 
 const navigation = [
     { name: 'Market', to: '/creation', icon: BuildingStorefrontIcon },
@@ -34,9 +35,6 @@ export function Dashboard(props) {
     // #endregion
 
     const [currentNavigation, setCurrentNavigation] = useState(getCurrentNavigation())
-
-    console.log('DEBUG: current navigation')
-    console.log(currentNavigation)
 
     return (
         <div className="min-h-full">
@@ -86,11 +84,7 @@ export function Dashboard(props) {
                                     </div>
                                 </Transition.Child>
                                 <div className="flex flex-shrink-0 items-center px-4">
-                                    <img
-                                        className="h-8 w-auto"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                                        alt="Your Company"
-                                    />
+                                    <CreateSuiteLogo />
                                 </div>
                                 <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                     <nav className="px-2">
@@ -135,66 +129,11 @@ export function Dashboard(props) {
             {/* Static sidebar for desktop */}
             <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4">
                 <div className="flex flex-shrink-0 items-center px-6">
-                    <img
-                        className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                        alt="Your Company"
-                    />
+                    <CreateSuiteLogo />
                 </div>
 
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="mt-5 flex h-0 flex-1 flex-col overflow-y-auto pt-1">
-                    {/* User account dropdown */}
-                    <Menu as="div" className="relative inline-block px-3 text-left">
-                        {isConnected ? <Account address={address} /> : null}
-                        <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-100"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
-                        >
-                            <Menu.Items className="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                <div className="py-1">
-                                    {navigation.map((x) => {
-                                        return (
-                                            <Menu.Item key={x.name}>
-                                                {({ active }) => (
-                                                    <Link
-                                                        to={x.to}
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                        onClick={() => setCurrentNavigation(x)}
-                                                    >
-                                                        {x.name}
-                                                    </Link>
-                                                )}
-                                            </Menu.Item>
-                                        )
-                                    })}
-                                </div>
-                                <div className="py-1">
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <Link
-                                                to="/creation"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm',
-                                                )}
-                                            >
-                                                Support
-                                            </Link>
-                                        )}
-                                    </Menu.Item>
-                                </div>
-                            </Menu.Items>
-                        </Transition>
-                    </Menu>
                     {/* Sidebar Search */}
                     <div className="mt-5 px-3">
                         <label htmlFor="search" className="sr-only">
@@ -217,7 +156,7 @@ export function Dashboard(props) {
                         </div>
                     </div>
                     {/* Navigation */}
-                    <nav className="mt-6 px-3">
+                    <nav className="mt-6 px-3 flex-1">
                         <div className="space-y-1">
                             {navigation.map((item) => (
                                 <Link
@@ -244,6 +183,8 @@ export function Dashboard(props) {
                             ))}
                         </div>
                     </nav>
+                    {/* User account */}
+                    {isConnected ? <Account address={address} /> : null}
                 </div>
             </div>
             {/* Main column */}

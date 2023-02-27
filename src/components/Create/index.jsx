@@ -9,6 +9,7 @@ import { isZero } from '../../helpers/isZero'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isValidAddress } from '../../helpers/isValidAddress'
 import { TokenListMenu } from '../TokenListMenu'
+import { scale10 } from '../../helpers/scale10'
 
 const defaultPaymentToken = TokenList['Mumbai'][0]
 
@@ -51,7 +52,7 @@ export function Create() {
             description,
             ownerAddress: address,
             paymentTokenAddress: paymentToken.address,
-            paymentTokenAmount,
+            paymentTokenAmount: scale10(paymentTokenAmount, paymentToken.decimals).toFixed(),
             attachments,
         }
     }, [address, name, description, paymentToken, paymentTokenAmount, attachments])
