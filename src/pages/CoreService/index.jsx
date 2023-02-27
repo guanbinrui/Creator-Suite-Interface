@@ -9,6 +9,7 @@ import { formatEthereumAddress } from '../../helpers/formatEthereumAddress'
 import { useBlockie } from '../../hooks/useBlockie'
 import { Create } from './Create'
 import { Services } from './Services'
+import logo from './nextid.svg'
 
 const navigation = [
     { name: 'Services', route: '/core-service', icon: TableCellsIcon },
@@ -81,11 +82,7 @@ export function CoreService() {
                                     </div>
                                 </Transition.Child>
                                 <div className="flex flex-shrink-0 items-center px-4">
-                                    <img
-                                        className="h-8 w-auto"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                                        alt="Your Company"
-                                    />
+                                    <img className="h-8 w-auto" src={logo} alt="Core Service" />
                                 </div>
                                 <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                     <nav className="px-2">
@@ -132,11 +129,8 @@ export function CoreService() {
             {/* Static sidebar for desktop */}
             <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4">
                 <div className="flex flex-shrink-0 items-center px-6">
-                    <img
-                        className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                        alt="Your Company"
-                    />
+                    <img className="h-8 w-auto" src={logo} alt="Core Service" />
+                    <h1 className="text-2xl ml-3">Core Service</h1>
                 </div>
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="mt-5 flex h-0 flex-1 flex-col overflow-y-auto pt-1">

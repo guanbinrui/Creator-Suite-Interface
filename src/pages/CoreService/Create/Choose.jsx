@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom'
 
 const files = [
     {
-        title: 'Demo Service',
+        title: 'Auth Service',
         source: 'https://picsum.photos/500/300',
     },
     {
-        title: 'Demo Service 2',
+        title: 'Auth Service 2',
         source: 'https://picsum.photos/500/300?2',
     },
 ]
@@ -43,6 +43,9 @@ export function Choose() {
                         </div>
                         <p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
                             {file.title}
+                        </p>
+                        <p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
+                            Self-hosted service that provides authentication and authorization for web apps and dApps.
                         </p>
                     </li>
                 ))}
