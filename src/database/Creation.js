@@ -68,7 +68,7 @@ function validateCreation(creation) {
  * @returns
  */
 export async function createCreation(initials) {
-    await delay(1500)
+    await delay(500)
 
     const { id: creationId, ownerAddress } = initials
     const creation = await getCreation(creationId)
@@ -152,7 +152,7 @@ export async function updateCreation(creationId, updates) {
  * @param {string} creationId
  */
 export async function removeCreation(creationId) {
-    await delay(1500)
+    await delay(500)
     const creation = await getCreation(creationId)
     if (!creation) throw new Error('Cannnot find creation.')
 
@@ -170,7 +170,7 @@ export async function removeCreation(creationId) {
  */
 export async function getCreation(creationId) {
     // other db methods depend on getCreation()
-    // await delay(1500)
+    // await delay(500)
 
     const creation = await creationStore.getItem(creationId)
     if (isRemoved(creation)) return
@@ -184,7 +184,7 @@ export async function getCreation(creationId) {
 export async function getAllCreations() {
     const creations = []
 
-    await delay(1500)
+    await delay(500)
     await creationStore.iterate((value, key) => {
         creations.push({
             id: key,
@@ -205,7 +205,7 @@ export async function getAllOwnedCreations(owner) {
 
     const creations = []
 
-    await delay(1500)
+    await delay(500)
     await creationStore.iterate((value, key) => {
         console.log({
             key,
@@ -232,7 +232,7 @@ export async function getAllPurchasedCreations(buyer) {
 
     const creations = []
 
-    await delay(1500)
+    await delay(500)
     await creationStore.iterate((value, key) => {
         if (value.buyers.some((x) => isSameAddress(x.address, buyer))) {
             creations.push({

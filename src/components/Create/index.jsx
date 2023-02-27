@@ -242,7 +242,7 @@ export function Create() {
                                     }}
                                 >
                                     {isMutating
-                                        ? 'Creating...'
+                                        ? 'Listing...'
                                         : submitted
                                         ? validationMessage || 'Complete Listing'
                                         : 'Complete Listing'}
