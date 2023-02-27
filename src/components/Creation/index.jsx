@@ -127,7 +127,7 @@ export function Creation() {
                             </div>
 
                             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-1">
-                                {owned || bought ? (
+                                {owned ? (
                                     <button
                                         type="button"
                                         className="flex w-1/2 max-w-sm items-center justify-center rounded-md border border-transparent bg-blue-50 py-3 px-8 text-base font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
@@ -135,6 +135,14 @@ export function Creation() {
                                     >
                                         Preview
                                     </button>
+                                ) : bought ? (
+                                    <a
+                                        className="flex w-1/2 max-w-sm items-center justify-center rounded-md border border-transparent bg-blue-50 py-3 px-8 text-base font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                        href={creation.attachments[0].content}
+                                        download={creation.attachments[0].name}
+                                    >
+                                        Download
+                                    </a>
                                 ) : (
                                     <>
                                         <button
