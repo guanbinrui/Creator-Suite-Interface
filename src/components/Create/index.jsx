@@ -116,6 +116,7 @@ export function Create() {
                                         <a
                                             className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
                                             href="https://www.markdownguide.org/"
+                                            rel="noreferrer"
                                             target="_blank"
                                         >
                                             Markdown

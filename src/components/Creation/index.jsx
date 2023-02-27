@@ -75,6 +75,7 @@ export function Creation() {
                                         <span className="mr-1">with txn</span>
                                         <a
                                             href={resolveTransactionHashLink(polygonMumbai.id, data.transactionHash)}
+                                            rel="noreferrer"
                                             target="_blank"
                                         >
                                             {formatKeccakHash(data.transactionHash, 4)}
