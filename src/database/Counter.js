@@ -1,6 +1,8 @@
 import { createInstance } from 'localforage'
 import { formatEthereumAddress } from '../helpers/formatEthereumAddress'
 
+const INITIAL_COUNT = 1
+
 const counterStore = createInstance({
     name: 'Counter',
     version: 3,
@@ -11,7 +13,7 @@ export async function getCount(owner) {
     const counter = await counterStore.getItem(key)
 
     if (counter === null) {
-        await counterStore.setItem(key, 0)
+        await counterStore.setItem(key, INITIAL_COUNT)
     }
     return counterStore.getItem(key)
 }
