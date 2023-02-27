@@ -43,7 +43,7 @@ export function Create() {
         )
             return 'The given attachment not supported.'
         return ''
-    }, [name, description, paymentToken, paymentTokenAmount, attachments])
+    }, [name, paymentToken, paymentTokenAmount, attachments])
 
     const creation = useMemo(() => {
         return {

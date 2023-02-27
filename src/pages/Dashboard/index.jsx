@@ -1,5 +1,5 @@
-import { Fragment, Suspense, useEffect, useState } from 'react'
-import { Route, Routes, Navigate, Link, useLocation } from 'react-router-dom'
+import { Fragment, Suspense, useState } from 'react'
+import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Menu, Transition } from '@headlessui/react'
