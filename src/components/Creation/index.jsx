@@ -8,6 +8,7 @@ import { Avatar } from '../Avatar'
 import { Previewer } from '../Previewer'
 import { Spinner } from '../Spinner'
 import { Markdown } from '../Markdown'
+import TOKEN_LIST from '../../constants/TokenList.json'
 import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
 import { useCreation } from '../../hooks/useCreation'
@@ -30,6 +31,8 @@ export function Creation() {
     const bought = (data?.buyers ?? []).some((x) => isSameAddress(x.address, address))
 
     const { trigger, isMutating } = usePurchaseCreation(creationId, address)
+
+    const paymentToken = TOKEN_LIST['Mumbai'].find((x) => isSameAddress(x.address, data?.paymentTokenAddress))
 
     if (isValidating) return <Spinner />
     if (!data) return null
@@ -80,6 +83,7 @@ export function Creation() {
                                         >
                                             {formatKeccakHash(data.transactionHash, 4)}
                                         </a>
+                                        <span>.</span>
                                     </p>
                                 </div>
 
@@ -130,10 +134,10 @@ export function Creation() {
                                         {isMutating
                                             ? 'Paying...'
                                             : `Pay ${formatBalance(
-                                                  data.paymentTokenAmount * 10,
-                                                  1,
+                                                  data.paymentTokenAmount,
+                                                  paymentToken.decimals,
                                                   2,
-                                              )} DAI for full-access`}
+                                              )} ${paymentToken.symbol} for full-access`}
                                     </button>
                                 )}
                             </div>

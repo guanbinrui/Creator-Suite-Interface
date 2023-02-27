@@ -32,7 +32,7 @@ export function Creation(props) {
                             <p className="text-sm text-gray-900">
                                 <span className="mr-1 text-gray-500">Price:</span>
                                 <span className="font-medium">
-                                    {formatBalance(props.paymentTokenAmount, paymentToken.decimals)}{' '}
+                                    {formatBalance(props.paymentTokenAmount, paymentToken.decimals, 2)}{' '}
                                     {paymentToken.symbol}
                                 </span>
                             </p>
