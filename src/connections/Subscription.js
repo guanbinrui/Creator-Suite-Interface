@@ -16,15 +16,16 @@ function getSubscriptionContractAddress() {
  * @param {string} contentId
  * @returns
  */
-export function getAssetId(creator, contentId) {
+export async function getAssetId(creator, contentId) {
     if (!isValidAddress(creator)) throw new Error('Not a valid creator address.')
-    return readContract({
+    const assetId = await readContract({
         chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
         abi: ContractSubscriptionABI,
         functionName: 'getAssetId',
         args: [creator, contentId],
     })
+    return assetId.toString()
 }
 
 /**

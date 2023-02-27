@@ -1,9 +1,13 @@
 import { formatDistanceToNowStrict } from 'date-fns'
 import { Link } from 'react-router-dom'
-import { formatPrice } from '../../helpers/formatPrice'
+import TOKEN_LIST from '../../constants/TokenList.json'
+import { formatBalance } from '../../helpers/formatBalance'
 import { getFileType } from '../../helpers/getFileType'
+import { isSameAddress } from '../../helpers/isSameAddress'
 
 export function Creation(props) {
+    const paymentToken = TOKEN_LIST['Mumbai'].find((x) => isSameAddress(x.address, props.paymentTokenAddress))
+
     return (
         <Link to={`/creation/${props.id}`}>
             <div key={props.id} className="group relative">
@@ -24,10 +28,15 @@ export function Creation(props) {
                                 addSuffix: true,
                             })}
                         </p>
-                        <p className="text-sm text-gray-900">
-                            <span className="mr-1 text-gray-500">Price:</span>
-                            <span className="font-medium">{formatPrice(props.paymentTokenAmount * 10, 'DAI')}</span>
-                        </p>
+                        {paymentToken ? (
+                            <p className="text-sm text-gray-900">
+                                <span className="mr-1 text-gray-500">Price:</span>
+                                <span className="font-medium">
+                                    {formatBalance(props.paymentTokenAmount, paymentToken.decimals)}{' '}
+                                    {paymentToken.symbol}
+                                </span>
+                            </p>
+                        ) : null}
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import { chain, isNil, isEmpty } from 'lodash'
 import { createInstance } from 'localforage'
-import { commitCount, getCount } from './Counter'
+import { commitCount } from './Counter'
 import { isSameAddress } from '../helpers/isSameAddress'
 import { isGreaterThan } from '../helpers/isGreaterThan'
 import { isValidAddress } from '../helpers/isValidAddress'
@@ -18,9 +18,6 @@ function isRemoved(creation) {
 function validateCreation(creation) {
     // id
     if (typeof creation.id === 'undefined') throw new Error('No id.')
-
-    // asset id
-    if (typeof creation.assetId === 'undefined') throw new Error('No asset id.')
 
     // hash
     if (!creation.transactionHash) throw new Error('No transaction hash.')
@@ -73,7 +70,7 @@ function validateCreation(creation) {
 export async function createCreation(initials) {
     await delay(1500)
 
-    const creationId = await getCount()
+    const { id: creationId, ownerAddress } = initials
     const creation = await getCreation(creationId)
     if (creation) throw new Error('Already exists.')
 
@@ -91,7 +88,7 @@ export async function createCreation(initials) {
         }),
     )
 
-    await commitCount()
+    await commitCount(ownerAddress)
     return creationStore.getItem(creationId)
 }
 

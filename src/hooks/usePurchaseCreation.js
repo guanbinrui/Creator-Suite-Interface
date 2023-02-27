@@ -24,7 +24,8 @@ export function usePurchaseCreation(creationId, buyer) {
             const qualified = await isQualified(buyer, assetId)
             if (qualified) throw new Error('Already purchased.')
 
-            return purchaseCreation(creationId, buyer, await purchaseAsset(assetId))
+            const transactionHash = await purchaseAsset(assetId)
+            return purchaseCreation(creationId, buyer, transactionHash)
         },
         {
             suspense: true,

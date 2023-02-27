@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { useAccount } from 'wagmi'
+import { polygonMumbai } from '@wagmi/chains'
 import { PurchasedNotification } from '../PurchasedNotification'
 import { Avatar } from '../Avatar'
 import { Previewer } from '../Previewer'
@@ -11,6 +12,8 @@ import { formatBalance } from '../../helpers/formatBalance'
 import { isSameAddress } from '../../helpers/isSameAddress'
 import { useCreation } from '../../hooks/useCreation'
 import { usePurchaseCreation } from '../../hooks/usePurchaseCreation'
+import { formatKeccakHash } from '../../helpers/formatKeccakHash'
+import { resolveTransactionHashLink } from '../../helpers/resolveTransactionHashLink'
 
 export function Creation() {
     const [success, setSuccess] = useState(false)
@@ -63,12 +66,19 @@ export function Creation() {
                                         {owned ? (
                                             <span className="mr-1">You</span>
                                         ) : (
-                                            <Avatar address={data?.ownerAddress} />
+                                            <Avatar address={data.ownerAddress} />
                                         )}
                                         <span className="mr-1">created at</span>
-                                        <time dateTime={data.createdAt}>
+                                        <time className="mr-1" dateTime={data.createdAt}>
                                             {format(data.createdAt, 'dd MMM, yyyy hh:mm a')}
                                         </time>
+                                        <span className="mr-1">with txn</span>
+                                        <a
+                                            href={resolveTransactionHashLink(polygonMumbai.id, data.transactionHash)}
+                                            target="_blank"
+                                        >
+                                            {formatKeccakHash(data.transactionHash, 4)}
+                                        </a>
                                     </p>
                                 </div>
 
