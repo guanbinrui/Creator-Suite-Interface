@@ -3,7 +3,7 @@ import { Route, Routes, Navigate, Link } from 'react-router-dom'
 import { useAccount, useNetwork } from 'wagmi'
 import { polygonMumbai } from '@wagmi/core/chains'
 import { Dialog, Transition } from '@headlessui/react'
-import { BuildingStorefrontIcon, XMarkIcon, ShoppingBagIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, PlusIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Create } from '../../components/Create'
 import { Creation } from '../../components/Creation'
@@ -19,7 +19,7 @@ import { NavigationIcon } from '../../components/NavigationIcon'
 
 const navigation = [
     { name: 'Creations', to: '/creation', icon: NavigationIcon },
-    { name: 'List', to: '/creation/create', icon: SparklesIcon },
+    { name: 'List Creation', to: '/creation/create', icon: PlusCircleIcon },
 ]
 
 function getCurrentNavigation() {

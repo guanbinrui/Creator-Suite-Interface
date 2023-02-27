@@ -81,7 +81,7 @@ export function Creation() {
                                         ) : (
                                             <Avatar address={creation.ownerAddress} />
                                         )}
-                                        <span className="mr-1">created at</span>
+                                        <span className="mr-1">listed at</span>
                                         <time className="mr-1" dateTime={creation.createdAt}>
                                             {format(creation.createdAt, 'dd MMM, yyyy hh:mm a')}
                                         </time>
@@ -103,7 +103,7 @@ export function Creation() {
                                 {bought ? (
                                     <div>
                                         <p className="text-green-500">
-                                            You have bought this creation at{' '}
+                                            You have purchased this creation at{' '}
                                             <a
                                                 href={resolveTransactionHashLink(
                                                     polygonMumbai.id,

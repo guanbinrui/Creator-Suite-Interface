@@ -1,8 +1,8 @@
 import { Fragment, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { Link } from 'react-router-dom'
 
 export function PurchasedNotification(props) {
     const { show, setShow, success } = props
@@ -51,13 +51,7 @@ export function PurchasedNotification(props) {
                                         </p>
                                         {success ? (
                                             <p className="mt-1 text-sm text-gray-500">
-                                                You can view it in{' '}
-                                                <Link to="/creation/purchased">
-                                                    <span className="font-medium text-blue-600 hover:text-blue-500">
-                                                        Purchased
-                                                    </span>
-                                                </Link>
-                                                .
+                                                Congratulations! You can download the creation now.
                                             </p>
                                         ) : (
                                             <p className="mt-1 text-sm text-gray-500">Please try again later.</p>
