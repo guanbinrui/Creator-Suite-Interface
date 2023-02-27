@@ -2,13 +2,7 @@ import { prepareWriteContract, readContract, writeContract } from '@wagmi/core'
 import { polygonMumbai } from '@wagmi/core/chains'
 import ContractSubscriptionABI from '../abis/ContentSubscription.json'
 import { isValidAddress } from '../helpers/isValidAddress'
-import CONTENT_SUBSCRIPTION from '../constants/ContentSubscription.json'
-
-function getSubscriptionContractAddress() {
-    const address = CONTENT_SUBSCRIPTION['Mumbai']
-    if (!isValidAddress(address)) throw new Error('Invalid contract address.')
-    return address
-}
+import { getSubscriptionContractAddress } from '../helpers/getSubscriptionContractAddress'
 
 /**
  * Compute asset id from the creator address and content id
@@ -93,6 +87,7 @@ export async function purchaseAsset(assetId) {
  * @returns
  */
 export async function withdrawToken(paymentTokenAddress, paymentTokenAmount) {
+    if (!isValidAddress(paymentTokenAddress)) throw new Error('Not a valid payment token address.')
     const config = await prepareWriteContract({
         chainId: polygonMumbai.id,
         address: getSubscriptionContractAddress(),
