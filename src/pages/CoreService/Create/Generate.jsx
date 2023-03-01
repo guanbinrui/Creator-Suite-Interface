@@ -39,7 +39,9 @@ export function Generate() {
         const result = await fetcher('/api/core/generate', {
             method: 'POST',
         })
-        if (result.status === 500 && result.detail === 'already setup') {
+        const alreadySetup = result.status === 500 && result.detail === 'already setup'
+        const conflict = result.status === 409 && result.detail === 'Already setup.'
+        if (alreadySetup || conflict) {
             navigate('/core-service/create/choose')
             return
         }
