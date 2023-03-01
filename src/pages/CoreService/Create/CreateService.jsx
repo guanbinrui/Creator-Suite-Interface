@@ -33,12 +33,11 @@ export function CreateService() {
     if (!injections) return null
 
     return (
-        <div class="py-6">
+        <div className="py-6">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
                 <h2 className="text-2xl font-semibold text-gray-900">Create</h2>
             </div>
             <form className="space-y-8 divide-y divide-gray-200">
-                <h2 className="px-4">Create</h2>
                 <div className="space-y-8 divide-y divide-gray-200">
                     {injections.map((injection) => {
                         const key = injection.Key
